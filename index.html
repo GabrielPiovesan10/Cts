@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
- <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-<link rel="manifest" href="/site.webmanifest">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GP Tech Finance</title>
@@ -15,557 +15,125 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
-
-        body {
-            background: #f4f7fc;
-            color: #0f172a;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: #f4f7fc; color: #0f172a; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
 
         .app-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 28px;
-            box-shadow: 0 20px 40px -12px rgba(15, 23, 42, 0.08);
-            padding: 35px;
-            width: 100%;
-            max-width: 580px;
-            transition: all 0.3s ease;
-            position: relative;
+            background: #ffffff; border: 1px solid #e2e8f0; border-radius: 28px;
+            box-shadow: 0 20px 40px -12px rgba(15, 23, 42, 0.08); padding: 35px;
+            width: 100%; max-width: 580px; transition: all 0.3s ease; position: relative;
         }
 
-        .hidden {
-            display: none !important;
-        }
+        .hidden { display: none !important; }
 
         /* TELA DE AUTH */
-        .auth-header {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
+        .auth-header { text-align: center; margin-bottom: 25px; }
         .auth-logo-box {
-            width: 64px;
-            height: 64px;
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            color: #ffffff;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.7rem;
-            margin: 0 auto 15px auto;
+            width: 64px; height: 64px; background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #ffffff; border-radius: 20px; display: flex; align-items: center;
+            justify-content: center; font-size: 1.7rem; margin: 0 auto 15px auto;
             box-shadow: 0 10px 20px rgba(37, 99, 235, 0.25);
         }
+        .auth-header h1 { font-size: 1.8rem; font-weight: 800; color: #0f172a; margin-bottom: 6px; }
+        .auth-header p { color: #64748b; font-size: 0.92rem; }
+        .auth-tabs { display: flex; background: #f1f5f9; border-radius: 14px; padding: 6px; margin-bottom: 25px; }
+        .auth-tab { flex: 1; text-align: center; padding: 12px; cursor: pointer; border-radius: 10px; color: #64748b; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; }
+        .auth-tab.active { background: #ffffff; color: #2563eb; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); }
 
-        .auth-header h1 {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: #0f172a;
-            margin-bottom: 6px;
+        /* INPUTS MODERNOS */
+        .input-group { margin-bottom: 18px; }
+        .input-group label { display: block; font-size: 0.85rem; color: #334155; margin-bottom: 8px; font-weight: 600; }
+        .input-wrapper { position: relative; display: flex; align-items: center; }
+        .input-wrapper i { position: absolute; left: 16px; color: #64748b; font-size: 1rem; pointer-events-none; }
+        .input-wrapper input, .input-wrapper select {
+            width: 100%; padding: 15px 15px 15px 48px; border-radius: 14px; border: 1px solid #cbd5e1;
+            background: #ffffff; color: #0f172a; font-size: 0.95rem; outline: none; transition: all 0.2s; appearance: none;
         }
-
-        .auth-header p {
-            color: #64748b;
-            font-size: 0.92rem;
-        }
-
-        .auth-tabs {
-            display: flex;
-            background: #f1f5f9;
-            border-radius: 14px;
-            padding: 6px;
-            margin-bottom: 25px;
-        }
-
-        .auth-tab {
-            flex: 1;
-            text-align: center;
-            padding: 12px;
-            cursor: pointer;
-            border-radius: 10px;
-            color: #64748b;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-        }
-
-        .auth-tab.active {
-            background: #ffffff;
-            color: #2563eb;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-
-        /* INPUTS MODERNOS COM ÍCONES */
-        .input-group {
-            margin-bottom: 18px;
-        }
-
-        .input-group label {
-            display: block;
-            font-size: 0.85rem;
-            color: #334155;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-
-        .input-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .input-wrapper i {
-            position: absolute;
-            left: 16px;
-            color: #64748b;
-            font-size: 1rem;
-            pointer-events-none;
-        }
-
-        .input-wrapper input, 
         .input-wrapper select {
-            width: 100%;
-            padding: 15px 15px 15px 48px;
-            border-radius: 14px;
-            border: 1px solid #cbd5e1;
-            background: #ffffff;
-            color: #0f172a;
-            font-size: 0.95rem;
-            outline: none;
-            transition: all 0.2s;
-            appearance: none;
+            cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 16px center; background-size: 18px; padding-right: 45px;
         }
-
-        .input-wrapper select {
-            cursor: pointer;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 16px center;
-            background-size: 18px;
-            padding-right: 45px;
-        }
-
-        .input-wrapper input:focus, 
-        .input-wrapper select:focus {
-            border-color: #2563eb;
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
-        }
+        .input-wrapper input:focus, .input-wrapper select:focus { border-color: #2563eb; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08); }
 
         .btn-primary {
-            width: 100%;
-            padding: 16px;
-            border-radius: 14px;
-            border: none;
-            background: #2563eb;
-            color: white;
-            font-weight: 700;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
-            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+            width: 100%; padding: 16px; border-radius: 14px; border: none; background: #2563eb;
+            color: white; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: background 0.2s, transform 0.1s;
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2); display: flex; align-items: center; justify-content: center; gap: 10px;
         }
-
-        .btn-primary:hover {
-            background: #1d4ed8;
-        }
-
-        .btn-primary:active {
-            transform: scale(0.98);
-        }
+        .btn-primary:hover { background: #1d4ed8; }
+        .btn-primary:active { transform: scale(0.98); }
 
         /* TELA PRINCIPAL */
-        .app-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 18px;
-            border-bottom: 1px solid #f1f5f9;
-        }
-
-        .app-header h2 {
-            font-size: 1rem;
-            color: #64748b;
-            font-weight: 500;
-        }
-
-        .app-header h2 strong {
-            font-weight: 700;
-            color: #0f172a;
-        }
-
-        .btn-logout {
-            background: #fef2f2;
-            color: #dc2626;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: background 0.2s;
-        }
-
-        .btn-logout:hover {
-            background: #fee2e2;
-        }
-
-        /* ABAS DE PERFIS */
-        .user-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
-        }
-
-        .user-tab-btn {
-            flex: 1;
-            padding: 12px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 14px;
-            color: #64748b;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.2s;
-        }
-
-        .user-tab-btn.active {
-            background: #eff6ff;
-            border-color: #2563eb;
-            color: #2563eb;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
-        }
+        .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 18px; border-bottom: 1px solid #f1f5f9; }
+        .app-header h2 { font-size: 1rem; color: #64748b; font-weight: 500; }
+        .app-header h2 strong { font-weight: 700; color: #0f172a; }
+        .btn-logout { background: #fef2f2; color: #dc2626; border: none; padding: 8px 14px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; transition: background 0.2s; }
+        .btn-logout:hover { background: #fee2e2; }
 
         /* CARDS DE RESUMO */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .dash-card {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            padding: 18px;
-            border-radius: 18px;
-            text-align: left;
-        }
-
-        .dash-card.balance {
-            grid-column: span 2;
-            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-            border-color: #bbf7d0;
-        }
-
-        .dash-card.balance.negative {
-            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
-            border-color: #fecaca;
-        }
-
-        .dash-card h3 {
-            font-size: 0.75rem;
-            color: #64748b;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 6px;
-            font-weight: 700;
-        }
-
-        .dash-card p {
-            font-size: 1.4rem;
-            font-weight: 800;
-            color: #0f172a;
-        }
-
-        .dash-card.balance p {
-            font-size: 1.8rem;
-            color: #16a34a;
-        }
-        .dash-card.balance.negative p {
-            color: #dc2626;
-        }
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .dash-card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 18px; border-radius: 18px; text-align: left; }
+        .dash-card.balance { grid-column: span 2; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-color: #bbf7d0; }
+        .dash-card.balance.negative { background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); border-color: #fecaca; }
+        .dash-card h3 { font-size: 0.75rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; font-weight: 700; }
+        .dash-card p { font-size: 1.4rem; font-weight: 800; color: #0f172a; }
+        .dash-card.balance p { font-size: 1.8rem; color: #16a34a; }
+        .dash-card.balance.negative p { color: #dc2626; }
 
         /* SEÇÕES E LISTAS */
-        .section-title {
-            font-size: 0.95rem;
-            font-weight: 700;
-            margin-bottom: 15px;
-            color: #1e293b;
-            border-bottom: 1px solid #f1f5f9;
-            padding-bottom: 10px;
-            margin-top: 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .expense-list {
-            list-style: none;
-            max-height: 260px;
-            overflow-y: auto;
-            padding-right: 4px;
-        }
-
+        .section-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 15px; color: #1e293b; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; margin-top: 25px; display: flex; justify-content: space-between; align-items: center; }
+        .expense-list { list-style: none; max-height: 260px; overflow-y: auto; padding-right: 4px; }
         .expense-list::-webkit-scrollbar { width: 4px; }
         .expense-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-
-        .expense-item {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            padding: 14px 16px;
-            border-radius: 14px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            transition: all 0.2s;
-        }
-
-        .expense-item.pago {
-            background: #f0fdf4 !important;
-            border-color: #bbf7d0 !important;
-        }
-
-        .expense-item.pago .expense-value {
-            color: #16a34a !important;
-        }
-
-        .expense-item .info strong {
-            display: block;
-            font-size: 0.95rem;
-            color: #0f172a;
-            margin-bottom: 2px;
-        }
-
-        .expense-item .info small {
-            color: #64748b;
-            font-size: 0.75rem;
-            background: #e2e8f0;
-            padding: 2px 8px;
-            border-radius: 6px;
-            font-weight: 500;
-        }
-
-        .expense-item.pago .info small {
-            background: #dcfce7;
-            color: #16a34a;
-            font-weight: 700;
-        }
-
-        .expense-right {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .expense-value {
-            font-weight: 800;
-            color: #dc2626;
-            font-size: 1rem;
-        }
+        .expense-item { background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px 16px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; transition: all 0.2s; }
+        .expense-item.pago { background: #f0fdf4 !important; border-color: #bbf7d0 !important; }
+        .expense-item.pago .expense-value { color: #16a34a !important; }
+        .expense-item .info strong { display: block; font-size: 0.95rem; color: #0f172a; margin-bottom: 2px; }
+        .expense-item .info small { color: #64748b; font-size: 0.75rem; background: #e2e8f0; padding: 2px 8px; border-radius: 6px; font-weight: 500; }
+        .expense-item.pago .info small { background: #dcfce7; color: #16a34a; font-weight: 700; }
+        .expense-right { display: flex; align-items: center; gap: 15px; }
+        .expense-value { font-weight: 800; color: #dc2626; font-size: 1rem; }
 
         /* BOTÕES DE AÇÃO */
-        .actions-group {
-            display: flex;
-            gap: 6px;
-        }
-
-        .btn-action {
-            width: 34px;
-            height: 34px;
-            border-radius: 10px;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.85rem;
-            transition: all 0.2s;
-        }
-
+        .actions-group { display: flex; gap: 6px; }
+        .btn-action { width: 34px; height: 34px; border-radius: 10px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; transition: all 0.2s; }
         .btn-action.pay { background: #dcfce7; color: #16a34a; }
         .btn-action.pay:hover { background: #16a34a; color: white; }
-
         .btn-action.edit { background: #fef9c3; color: #ca8a04; }
         .btn-action.edit:hover { background: #ca8a04; color: white; }
-
         .btn-action.delete { background: #fee2e2; color: #dc2626; }
         .btn-action.delete:hover { background: #dc2626; color: white; }
-
-        .chart-container {
-            width: 100%;
-            max-width: 220px;
-            margin: 0 auto 20px auto;
-        }
+        .chart-container { width: 100%; max-width: 220px; margin: 0 auto 20px auto; }
 
         /* BOTÃO DO HISTÓRICO */
-        .btn-history-toggle {
-            width: 100%;
-            padding: 15px;
-            background: #f1f5f9;
-            border: 1px solid #cbd5e1;
-            border-radius: 14px;
-            color: #334155;
-            font-weight: 700;
-            font-size: 0.9rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: all 0.2s;
-            margin-top: 15px;
-        }
-
-        .btn-history-toggle:hover {
-            background: #e2e8f0;
-            border-color: #94a3b8;
-        }
-
-        .history-box {
-            background: #f8fafc;
-            border: 1px solid #cbd5e1;
-            border-radius: 16px;
-            padding: 15px;
-            margin-top: 10px;
-            max-height: 250px;
-            overflow-y: auto;
-        }
-
-        .history-item {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            padding: 10px 12px;
-            border-radius: 10px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.85rem;
-        }
+        .btn-history-toggle { width: 100%; padding: 15px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 14px; color: #334155; font-weight: 700; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s; margin-top: 15px; }
+        .btn-history-toggle:hover { background: #e2e8f0; border-color: #94a3b8; }
+        .history-box { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 16px; padding: 15px; margin-top: 10px; max-height: 250px; overflow-y: auto; }
+        .history-item { background: #ffffff; border: 1px solid #e2e8f0; padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
 
         /* MODAL GERAL */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(15, 23, 42, 0.5);
-            backdrop-filter: blur(4px);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .modal-card {
-            background: #ffffff;
-            border-radius: 24px;
-            padding: 30px;
-            width: 90%;
-            max-width: 420px;
-            text-align: center;
-            box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
-            animation: modalPop 0.3s ease;
-        }
-
-        .modal-icon {
-            width: 64px;
-            height: 64px;
-            background: #eff6ff;
-            color: #2563eb;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.7rem;
-            margin: 0 auto 15px auto;
-        }
-
-        .modal-card h3 {
-            font-size: 1.3rem;
-            font-weight: 800;
-            color: #0f172a;
-            margin-bottom: 8px;
-        }
-
-        .modal-card p {
-            color: #64748b;
-            font-size: 0.95rem;
-            margin-bottom: 25px;
-            line-height: 1.5;
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .modal-btn {
-            flex: 1;
-            padding: 14px;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            cursor: pointer;
-            border: none;
-            transition: all 0.2s;
-        }
-
-        .modal-btn.cancel {
-            background: #f1f5f9;
-            color: #64748b;
-        }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-card { background: #ffffff; border-radius: 24px; padding: 30px; width: 90%; max-width: 420px; text-align: center; box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25); animation: modalPop 0.3s ease; }
+        .modal-icon { width: 64px; height: 64px; background: #eff6ff; color: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.7rem; margin: 0 auto 15px auto; }
+        .modal-card h3 { font-size: 1.3rem; font-weight: 800; color: #0f172a; margin-bottom: 8px; }
+        .modal-card p { color: #64748b; font-size: 0.95rem; margin-bottom: 25px; line-height: 1.5; }
+        .modal-buttons { display: flex; gap: 10px; }
+        .modal-btn { flex: 1; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 0.9rem; cursor: pointer; border: none; transition: all 0.2s; }
+        .modal-btn.cancel { background: #f1f5f9; color: #64748b; }
         .modal-btn.cancel:hover { background: #e2e8f0; }
-
-        .modal-btn.confirm {
-            background: #2563eb;
-            color: white;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
-        }
+        .modal-btn.confirm { background: #2563eb; color: white; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25); }
         .modal-btn.confirm:hover { background: #1d4ed8; }
-
-        @keyframes modalPop {
-            from { transform: scale(0.9); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
+        @keyframes modalPop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <!-- ================= MODAL DE TUTORIAL GUIADO ================= -->
+    <!-- MODAL DE TUTORIAL GUIADO -->
     <div id="modal-tutorial" class="modal-overlay hidden">
         <div class="modal-card">
-            <div class="modal-icon" id="tutorial-icon">
-                <i class="fa-solid fa-wallet"></i>
-            </div>
-            <h3 id="tutorial-titulo">Bem-vindo ao app financeiro da GP Tech Digital!</h3>
-            <p id="tutorial-texto">Aqui você controla suas finanças de forma simples, inteligente e integrada com seu parceiro(a).</p>
+            <div class="modal-icon" id="tutorial-icon"><i class="fa-solid fa-wallet"></i></div>
+            <h3 id="tutorial-titulo">Bem-vindo ao GP Tech Finance!</h3>
+            <p id="tutorial-texto">Aqui você controla suas finanças de forma simples, inteligente e totalmente segura.</p>
             
             <div style="display: flex; justify-content: center; gap: 6px; margin-bottom: 20px;" id="tutorial-dots">
                 <span style="width: 8px; height: 8px; border-radius: 50%; background: #2563eb;" class="dot"></span>
@@ -573,7 +141,6 @@
                 <span style="width: 8px; height: 8px; border-radius: 50%; background: #cbd5e1;" class="dot"></span>
                 <span style="width: 8px; height: 8px; border-radius: 50%; background: #cbd5e1;" class="dot"></span>
             </div>
-
             <div class="modal-buttons">
                 <button class="modal-btn cancel" onclick="fecharTutorial()">Pular</button>
                 <button class="modal-btn confirm" id="btn-tutorial-proximo" onclick="proximoPassoTutorial()">Próximo</button>
@@ -581,12 +148,10 @@
         </div>
     </div>
 
-    <!-- ================= MODAL DE CONFIRMAÇÃO DE PAGAMENTO ================= -->
+    <!-- MODAL DE CONFIRMAÇÃO DE PAGAMENTO -->
     <div id="modal-pagamento" class="modal-overlay hidden">
         <div class="modal-card">
-            <div class="modal-icon" style="background: #dcfce7; color: #16a34a;">
-                <i class="fa-solid fa-circle-check"></i>
-            </div>
+            <div class="modal-icon" style="background: #dcfce7; color: #16a34a;"><i class="fa-solid fa-circle-check"></i></div>
             <h3>Confirmar Pagamento</h3>
             <p id="modal-texto-pergunta">Deseja realmente marcar esta conta como paga?</p>
             <div class="modal-buttons">
@@ -596,12 +161,10 @@
         </div>
     </div>
 
-    <!-- ================= TELA DE AUTENTICAÇÃO ================= -->
+    <!-- TELA DE AUTENTICAÇÃO -->
     <div id="auth-screen" class="app-card">
         <div class="auth-header">
-            <div class="auth-logo-box">
-                <i class="fa-solid fa-wallet"></i>
-            </div>
+            <div class="auth-logo-box"><i class="fa-solid fa-wallet"></i></div>
             <h1>GP Tech Finance</h1>
             <p>Gestão financeira inteligente</p>
         </div>
@@ -614,8 +177,8 @@
         <div class="input-group">
             <label>Seu Email</label>
             <div class="input-wrapper">
-                <i class="fa-solid fa-user"></i>
-                <input type="text" id="auth-nome" placeholder="Seu Email">
+                <i class="fa-solid fa-envelope"></i>
+                <input type="email" id="auth-email" placeholder="Seu Email">
             </div>
         </div>
         
@@ -633,8 +196,7 @@
         </button>
     </div>
 
-
-    <!-- ================= TELA PRINCIPAL (DASHBOARD) ================= -->
+    <!-- TELA PRINCIPAL (DASHBOARD) -->
     <div id="app-screen" class="app-card hidden">
         
         <div class="app-header">
@@ -643,9 +205,6 @@
                 <i class="fa-solid fa-power-off"></i> Sair
             </button>
         </div>
-
-        <!-- Abas de Perfis -->
-        <div class="user-tabs" id="user-tabs-container"></div>
 
         <!-- Atualizar Salário -->
         <div id="area-salario" class="input-group">
@@ -683,7 +242,6 @@
         <!-- Adicionar / Editar Despesa -->
         <div id="area-nova-conta">
             <div class="section-title" id="titulo-form-conta">Adicionar Nova Conta</div>
-            
             <input type="hidden" id="edit-id" value="">
 
             <div class="input-group">
@@ -751,10 +309,11 @@
 
     </div>
 
-    <!-- Script principal integrado com Firebase Firestore -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, setDoc, getDoc, query, where } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+        // Importando Firebase Auth Oficial
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCyWKyWCPngLdtKkKRnQqhl-_u0HRiTKsw",
@@ -768,19 +327,18 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const auth = getAuth(app); // Inicializa o Auth
 
-        // Estado Global
         let usuarioLogado = null; 
-        let usuarioVisualizado = null; 
         let graficoChartJs = null;
         let historicoAberto = false;
         let idParaPagar = null;
         let passoTutorialAtual = 0;
 
         const passosTutorial = [
-            { icone: "fa-solid fa-wallet", titulo: "Bem-vindo ao FinanceApp Pro!", texto: "Este sistema gerencia suas finanças na nuvem, conectado ao Firestore." },
+            { icone: "fa-solid fa-wallet", titulo: "Bem-vindo ao GP Tech Finance!", texto: "Este sistema gerencia suas finanças na nuvem com 100% de privacidade." },
             { icone: "fa-solid fa-coins", titulo: "Salário e Saldo Livre", texto: "Defina seu salário. O app calcula automaticamente o saldo livre em tempo real." },
-            { icon: "fa-solid fa-sliders", titulo: "Tipos de Contas", texto: "Cadastre contas únicas, fixas mensais ou parceladas com avanço automático." },
+            { icone: "fa-solid fa-sliders", titulo: "Tipos de Contas", texto: "Cadastre contas únicas, fixas mensais ou parceladas com avanço automático." },
             { icone: "fa-solid fa-circle-check", titulo: "Pagamentos e Histórico", texto: "Marque contas como pagas e consulte o histórico organizado por mês." }
         ];
 
@@ -791,7 +349,6 @@
             return `${nomesMeses[dataAtual.getMonth()]} de ${dataAtual.getFullYear()}`;
         }
 
-        // Expondo funções globais para os botões do HTML
         window.mudarModoAuth = function(modo) {
             const tabLogin = document.getElementById('tab-login');
             const tabRegister = document.getElementById('tab-register');
@@ -811,91 +368,67 @@
         };
         window.currentAuthMode = 'login';
 
+        // LÓGICA DE AUTENTICAÇÃO COM FIREBASE AUTH
         window.processarAuth = async function() {
-            const nome = document.getElementById('auth-nome').value.trim();
+            const email = document.getElementById('auth-email').value.trim();
             const senha = document.getElementById('auth-senha').value.trim();
 
-            if(!nome || !senha) return alert("Preencha nome e senha!");
+            if(!email || !senha) return alert("Preencha e-mail e senha!");
 
-            const userRef = doc(db, "usuarios", nome.toLowerCase());
-            const userSnap = await getDoc(userRef);
-
-            if(window.currentAuthMode === 'register') {
-                if(userSnap.exists()) return alert("Esse nome já está cadastrado. Vá em Entrar.");
-                
-                await setDoc(userRef, { nome: nome, senha: senha, salario: 0 });
-                realizarLogin({ nome: nome, senha: senha, salario: 0 });
-            } else {
-                if(!userSnap.exists()) return alert("Usuário não encontrado.");
-                const userData = userSnap.data();
-                if(userData.senha !== senha) return alert("Senha incorreta!");
-                
-                realizarLogin(userData);
+            try {
+                if(window.currentAuthMode === 'register') {
+                    // Cria conta real
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
+                    // Salva o documento de usuário com o salário zerado vinculado ao ID seguro (UID)
+                    await setDoc(doc(db, "usuarios", userCredential.user.uid), { email: email, salario: 0 });
+                    alert("Conta criada com sucesso! Você será redirecionado para o painel.");
+                } else {
+                    // Faz o login
+                    await signInWithEmailAndPassword(auth, email, senha);
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Erro ao autenticar. Verifique seus dados ou tente novamente. " + error.message);
             }
         };
 
-        async function realizarLogin(user) {
-            usuarioLogado = user;
-            usuarioVisualizado = user.nome; 
-            
-            document.getElementById('auth-nome').value = '';
-            document.getElementById('auth-senha').value = '';
+        // OBSERVA SE O USUÁRIO ENTROU OU SAIU
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // Logado
+                usuarioLogado = user;
+                document.getElementById('auth-email').value = '';
+                document.getElementById('auth-senha').value = '';
 
-            document.getElementById('auth-screen').classList.add('hidden');
-            document.getElementById('app-screen').classList.remove('hidden');
-            document.getElementById('nome-usuario-logado').innerText = user.nome;
-            
-            await carregarUsuariosEGestionar();
-            abrirTutorial();
-        }
-
-        async function carregarUsuariosEGestionar() {
-            const querySnapshot = await getDocs(collection(db, "usuarios"));
-            window.listaUsuariosCache = [];
-            querySnapshot.forEach((doc) => {
-                window.listaUsuariosCache.push(doc.data());
-            });
-
-            gerarAbasUsuarios();
-            atualizarDashboard();
-        }
-
-        window.fazerLogout = function() {
-            usuarioLogado = null;
-            historicoAberto = false;
-            document.getElementById('app-screen').classList.add('hidden');
-            document.getElementById('auth-screen').classList.remove('hidden');
-        };
-
-        function gerarAbasUsuarios() {
-            const container = document.getElementById('user-tabs-container');
-            container.innerHTML = '';
-
-            window.listaUsuariosCache.forEach(u => {
-                const isAtivo = u.nome === usuarioVisualizado ? 'active' : '';
-                const textoAba = u.nome === usuarioLogado.nome ? 'Meu Painel' : `Painel de ${u.nome}`;
+                document.getElementById('auth-screen').classList.add('hidden');
+                document.getElementById('app-screen').classList.remove('hidden');
+                document.getElementById('nome-usuario-logado').innerText = user.email.split('@')[0];
                 
-                container.innerHTML += `
-                    <button class="user-tab-btn ${isAtivo}" onclick="trocarVisualizacao('${u.nome}')">
-                        <i class="fa-solid fa-user-circle"></i> ${textoAba}
-                    </button>
-                `;
-            });
-        }
+                await atualizarDashboard();
 
-        window.trocarVisualizacao = function(nome) {
-            usuarioVisualizado = nome;
-            window.cancelarEdicao();
-            gerarAbasUsuarios();
-            atualizarDashboard();
+                // Exibe tutorial apenas na primeira vez
+                if(!localStorage.getItem('tutorialVisto_' + user.uid)) {
+                    abrirTutorial();
+                    localStorage.setItem('tutorialVisto_' + user.uid, 'true');
+                }
+            } else {
+                // Deslogado
+                usuarioLogado = null;
+                document.getElementById('app-screen').classList.add('hidden');
+                document.getElementById('auth-screen').classList.remove('hidden');
+            }
+        });
+
+        window.fazerLogout = async function() {
+            await signOut(auth);
+            historicoAberto = false;
         };
 
         window.salvarSalario = async function() {
             const valor = parseFloat(document.getElementById('input-salario').value);
             if(isNaN(valor) || valor < 0) return alert('Valor inválido');
             
-            usuarioLogado.salario = valor;
-            const userRef = doc(db, "usuarios", usuarioLogado.nome.toLowerCase());
+            const userRef = doc(db, "usuarios", usuarioLogado.uid);
             await updateDoc(userRef, { salario: valor });
 
             document.getElementById('input-salario').value = '';
@@ -931,7 +464,7 @@
 
             if (!editId) {
                 await addDoc(collection(db, "despesas"), {
-                    dono: usuarioLogado.nome,
+                    donoId: usuarioLogado.uid, // Salvando com ID 100% seguro
                     descricao: desc,
                     valor: valor,
                     tipo: tipo,
@@ -1027,9 +560,9 @@
             const mesAnoAtual = obterMesAnoAtual();
             const dataCompleta = new Date().toLocaleDateString('pt-BR');
 
-            // Salva no histórico do Firestore
+            // Salva no histórico do Firestore com o ID Seguro
             await addDoc(collection(db, "historico"), {
-                dono: conta.dono,
+                donoId: usuarioLogado.uid,
                 descricao: conta.descricao,
                 valor: conta.valor,
                 mesAno: mesAnoAtual,
@@ -1089,14 +622,10 @@
         }
 
         async function atualizarDashboard() {
-            const isMeuPainel = (usuarioVisualizado === usuarioLogado.nome);
+            if(!usuarioLogado) return;
 
-            document.getElementById('area-salario').style.display = isMeuPainel ? 'block' : 'none';
-            document.getElementById('area-nova-conta').style.display = isMeuPainel ? 'block' : 'none';
-            document.getElementById('titulo-lista').innerText = isMeuPainel ? 'Contas do Mês' : `Contas de ${usuarioVisualizado}`;
-
-            // Puxa usuários atualizados do banco
-            const userSnap = await getDoc(doc(db, "usuarios", usuarioVisualizado.toLowerCase()));
+            // Puxa o salário atualizado do banco
+            const userSnap = await getDoc(doc(db, "usuarios", usuarioLogado.uid));
             const userView = userSnap.exists() ? userSnap.data() : { salario: 0 };
             const mesAnoAtual = obterMesAnoAtual();
             
@@ -1105,14 +634,13 @@
             const listaHtml = document.getElementById('lista-contas');
             listaHtml.innerHTML = '';
 
-            // Puxa despesas do Firestore
-            const despesasSnap = await getDocs(collection(db, "despesas"));
+            // Busca as despesas DESTE usuário com segurança total (where donoId == uid)
+            const qDespesas = query(collection(db, "despesas"), where("donoId", "==", usuarioLogado.uid));
+            const despesasSnap = await getDocs(qDespesas);
+            
             let despesasDoUsuario = [];
             despesasSnap.forEach((dDoc) => {
-                const data = dDoc.data();
-                if(data.dono === usuarioVisualizado) {
-                    despesasDoUsuario.push({ id: dDoc.id, ...data });
-                }
+                despesasDoUsuario.push({ id: dDoc.id, ...dDoc.data() });
             });
 
             if(despesasDoUsuario.length === 0) {
@@ -1147,12 +675,11 @@
                 ` : `
                     <div class="expense-right">
                         <div class="expense-value">R$ ${conta.valor.toFixed(2)}</div>
-                        ${isMeuPainel ? `
                         <div class="actions-group">
                             <button class="btn-action pay" title="Marcar como Paga" onclick="abrirModalPagamento('${conta.id}')"><i class="fa-solid fa-check"></i></button>
                             <button class="btn-action edit" title="Editar" onclick="prepararEdicao('${conta.id}')"><i class="fa-solid fa-pen"></i></button>
                             <button class="btn-action delete" title="Excluir" onclick="excluirDespesa('${conta.id}')"><i class="fa-solid fa-trash-can"></i></button>
-                        </div>` : ''}
+                        </div>
                     </div>
                 `;
 
@@ -1167,16 +694,15 @@
                 `;
             });
 
-            // Histórico do Firestore
+            // Histórico do Firestore blindado (where donoId == uid)
             const historicoHtml = document.getElementById('lista-historico');
             historicoHtml.innerHTML = '';
             
-            const histSnap = await getDocs(collection(db, "historico"));
+            const qHist = query(collection(db, "historico"), where("donoId", "==", usuarioLogado.uid));
+            const histSnap = await getDocs(qHist);
+            
             let meuHistorico = [];
-            histSnap.forEach((hDoc) => {
-                const hData = hDoc.data();
-                if(hData.dono === usuarioVisualizado) meuHistorico.push(hData);
-            });
+            histSnap.forEach((hDoc) => meuHistorico.push(hDoc.data()));
 
             if(meuHistorico.length === 0) {
                 historicoHtml.innerHTML = '<p style="color: #64748b; font-size: 0.85rem; text-align: center; padding: 10px;">Nenhum histórico registrado.</p>';
