@@ -8,209 +8,86 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>GP Tech Finance</title>
-    <!-- Chart.js para o gráfico -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
         :root {
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --bg-body: #f1f5f9;
-            --bg-card: #ffffff;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
+            --primary: #2563eb; --primary-hover: #1d4ed8;
+            --bg-body: #f1f5f9; --bg-card: #ffffff;
+            --text-main: #0f172a; --text-muted: #64748b;
             --border-color: #e2e8f0;
-            --success: #10b981;
-            --success-bg: #d1fae5;
-            --danger: #ef4444;
-            --danger-bg: #fee2e2;
-            --warning: #f59e0b;
-            --warning-bg: #fef3c7;
+            --success: #10b981; --success-bg: #d1fae5;
+            --danger: #ef4444; --danger-bg: #fee2e2;
+            --warning: #f59e0b; --warning-bg: #fef3c7;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
 
-        body {
-            background: var(--bg-body);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 20px;
-        }
+        body { background: var(--bg-body); color: var(--text-main); min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; padding: 20px; }
 
-        .app-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 24px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
-            padding: 30px;
-            width: 100%;
-            max-width: 540px;
-            position: relative;
-        }
+        .app-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 24px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); padding: 30px; width: 100%; max-width: 540px; position: relative; }
 
         .hidden { display: none !important; }
 
-        /* NAVEGAÇÃO PRINCIPAL (FINANCEIRO / MERCADO) */
-        .main-nav {
-            display: flex;
-            background: var(--bg-body);
-            border-radius: 14px;
-            padding: 6px;
-            margin-bottom: 25px;
-        }
+        .main-nav { display: flex; background: var(--bg-body); border-radius: 14px; padding: 6px; margin-bottom: 25px; }
+        .nav-btn { flex: 1; padding: 14px; border: none; background: transparent; color: var(--text-muted); font-weight: 700; font-size: 0.95rem; border-radius: 10px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .nav-btn.active { background: var(--bg-card); color: var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
 
-        .nav-btn {
-            flex: 1;
-            padding: 14px;
-            border: none;
-            background: transparent;
-            color: var(--text-muted);
-            font-weight: 700;
-            font-size: 0.95rem;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .nav-btn.active {
-            background: var(--bg-card);
-            color: var(--primary);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-
-        /* TELA DE AUTH */
         .auth-header { text-align: center; margin-bottom: 30px; }
-        
-        .auth-logo-box {
-            width: 72px; height: 72px;
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            color: #ffffff; border-radius: 20px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 2rem; margin: 0 auto 20px auto;
-            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
-        }
-
+        .auth-logo-box { width: 72px; height: 72px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #ffffff; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 20px auto; box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2); }
         .auth-header h1 { font-size: 1.7rem; font-weight: 800; margin-bottom: 8px; }
         .auth-header p { color: var(--text-muted); font-size: 0.95rem; }
-
-        .auth-tabs {
-            display: flex; background: var(--bg-body);
-            border-radius: 12px; padding: 4px; margin-bottom: 25px;
-        }
-
-        .auth-tab {
-            flex: 1; text-align: center; padding: 12px;
-            cursor: pointer; border-radius: 10px; color: var(--text-muted);
-            font-weight: 600; font-size: 0.9rem; transition: 0.3s;
-        }
-
+        .auth-tabs { display: flex; background: var(--bg-body); border-radius: 12px; padding: 4px; margin-bottom: 25px; }
+        .auth-tab { flex: 1; text-align: center; padding: 12px; cursor: pointer; border-radius: 10px; color: var(--text-muted); font-weight: 600; font-size: 0.9rem; transition: 0.3s; }
         .auth-tab.active { background: var(--bg-card); color: var(--primary); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); }
 
-        /* INPUTS MODERNOS */
         .input-group { margin-bottom: 20px; }
-        .input-group label {
-            display: block; font-size: 0.85rem; color: var(--text-main); margin-bottom: 8px; font-weight: 600;
-        }
+        .input-group label { display: block; font-size: 0.85rem; color: var(--text-main); margin-bottom: 8px; font-weight: 600; }
         .input-wrapper { position: relative; display: flex; align-items: center; }
         .input-wrapper i { position: absolute; left: 16px; color: var(--text-muted); font-size: 1.1rem; pointer-events: none; }
-        .input-wrapper input, .input-wrapper select {
-            width: 100%; padding: 16px 16px 16px 48px; border-radius: 14px; border: 2px solid transparent;
-            background: var(--bg-body); color: var(--text-main); font-size: 1rem; outline: none; transition: 0.2s ease; appearance: none;
-        }
-        .input-wrapper select {
-            cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-            background-repeat: no-repeat; background-position: right 16px center; background-size: 18px; padding-right: 45px;
-        }
-        .input-wrapper input:focus, .input-wrapper select:focus {
-            background: var(--bg-card); border-color: var(--primary); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
-        }
+        .input-wrapper input, .input-wrapper select { width: 100%; padding: 16px 16px 16px 48px; border-radius: 14px; border: 2px solid transparent; background: var(--bg-body); color: var(--text-main); font-size: 1rem; outline: none; transition: 0.2s ease; appearance: none; }
+        .input-wrapper select { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; background-size: 18px; padding-right: 45px; }
+        .input-wrapper input:focus, .input-wrapper select:focus { background: var(--bg-card); border-color: var(--primary); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1); }
 
-        /* BOTÕES PRINCIPAIS */
-        .btn-primary {
-            width: 100%; padding: 16px; border-radius: 14px; border: none; background: var(--primary); color: white;
-            font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px;
-        }
+        .btn-primary { width: 100%; padding: 16px; border-radius: 14px; border: none; background: var(--primary); color: white; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
         .btn-primary:active { transform: translateY(1px); }
 
-        /* HEADER DO APP */
-        .app-header {
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;
-            padding-bottom: 20px; border-bottom: 1px solid var(--border-color);
-        }
+        .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); }
         .app-header h2 { font-size: 1.1rem; color: var(--text-muted); font-weight: 500; }
         .app-header h2 strong { font-weight: 800; color: var(--text-main); }
-        .btn-logout {
-            background: var(--danger-bg); color: var(--danger); border: none; padding: 10px 14px;
-            border-radius: 12px; cursor: pointer; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; gap: 6px;
-        }
+        .btn-logout { background: var(--danger-bg); color: var(--danger); border: none; padding: 10px 14px; border-radius: 12px; cursor: pointer; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; }
 
-        /* GRID DE DASHBOARD */
         .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; }
-        .dash-card {
-            background: var(--bg-card); border: 1px solid var(--border-color); padding: 20px;
-            border-radius: 20px; display: flex; flex-direction: column; justify-content: center; box-shadow: 0 4px 6px rgba(0,0,0,0.02); transition: 0.3s;
-        }
+        .dash-card { background: var(--bg-card); border: 1px solid var(--border-color); padding: 20px; border-radius: 20px; display: flex; flex-direction: column; justify-content: center; box-shadow: 0 4px 6px rgba(0,0,0,0.02); transition: 0.3s; }
         .dash-card h3 { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; font-weight: 700; }
         .dash-card p { font-size: 1.4rem; font-weight: 800; color: var(--text-main); }
-
-        /* CARTÕES DE DESTAQUE COM GRADIENTE */
-        .dash-card.balance {
-            grid-column: span 2; background: linear-gradient(135deg, #1e3a8a, #3b82f6); border: none; color: white; box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
-        }
+        .dash-card.balance { grid-column: span 2; background: linear-gradient(135deg, #1e3a8a, #3b82f6); border: none; color: white; box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2); }
         .dash-card.balance h3 { color: rgba(255, 255, 255, 0.8); }
         .dash-card.balance p { color: #ffffff; font-size: 2.2rem; }
-        .dash-card.balance.negative {
-            background: linear-gradient(135deg, #7f1d1d, #ef4444); box-shadow: 0 10px 20px rgba(239, 68, 68, 0.2);
-        }
+        .dash-card.balance.negative { background: linear-gradient(135deg, #7f1d1d, #ef4444); box-shadow: 0 10px 20px rgba(239, 68, 68, 0.2); }
 
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .section-title { font-size: 1.1rem; font-weight: 800; margin-bottom: 15px; color: var(--text-main); margin-top: 35px; display: flex; align-items: center; gap: 8px; }
 
-        .section-title {
-            font-size: 1.1rem; font-weight: 800; margin-bottom: 15px; color: var(--text-main);
-            margin-top: 35px; display: flex; align-items: center; gap: 8px;
-        }
-
-        /* LISTA DE ITENS/DESPESAS */
         .expense-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
-        .expense-item {
-            background: var(--bg-card); border: 1px solid var(--border-color); padding: 18px;
-            border-radius: 18px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: 0.2s;
-        }
+        .expense-item { background: var(--bg-card); border: 1px solid var(--border-color); padding: 18px; border-radius: 18px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: 0.2s; }
         .expense-item.pago { background: #f8fafc; border-color: var(--success-bg); }
         .expense-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
         .expense-header strong { font-size: 1.05rem; color: var(--text-main); line-height: 1.3; }
         .expense-value { font-size: 1.2rem; font-weight: 800; color: var(--danger); white-space: nowrap; }
         .expense-item.pago .expense-value { color: var(--success); }
         
-        .expense-footer {
-            display: flex; justify-content: space-between; align-items: center;
-            border-top: 1px dashed var(--border-color); padding-top: 12px;
-        }
+        /* Modificado para suportar o novo botão de Adicionar como paga sem quebrar a tela */
+        .expense-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed var(--border-color); padding-top: 12px; flex-wrap: wrap; gap: 10px; }
+        
         .expense-tag { background: var(--bg-body); color: var(--text-muted); padding: 6px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; }
         .expense-item.pago .expense-tag { background: var(--success-bg); color: #047857; }
 
-        .actions-group { display: flex; gap: 8px; }
-        .btn-action {
-            width: 38px; height: 38px; border-radius: 10px; border: none; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; font-size: 1rem; transition: 0.2s;
-        }
+        .actions-group { display: flex; gap: 8px; flex-wrap: wrap; }
+        .btn-action { width: 38px; height: 38px; border-radius: 10px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; transition: 0.2s; }
         .btn-action.pay { background: var(--success-bg); color: var(--success); }
         .btn-action.pay:hover { background: var(--success); color: white; }
         .btn-action.edit { background: var(--warning-bg); color: var(--warning); }
@@ -218,28 +95,20 @@
         .btn-action.delete { background: var(--danger-bg); color: var(--danger); }
         .btn-action.delete:hover { background: var(--danger); color: white; }
 
+        /* Nova classe para o botão escrito Adicionar como paga */
+        .btn-action.pay-text { width: auto; padding: 0 12px; font-weight: 700; font-size: 0.85rem; gap: 6px; }
+
         .badge-pago { display: flex; align-items: center; gap: 6px; font-size: 0.9rem; color: var(--success); font-weight: 700; }
         .chart-container { width: 100%; max-width: 240px; margin: 0 auto 30px auto; }
 
-        .btn-history-toggle {
-            width: 100%; padding: 16px; background: var(--bg-card); border: 2px solid var(--border-color);
-            border-radius: 14px; color: var(--text-main); font-weight: 700; font-size: 0.95rem;
-            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 25px; transition: 0.2s;
-        }
+        .btn-history-toggle { width: 100%; padding: 16px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: 14px; color: var(--text-main); font-weight: 700; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 25px; transition: 0.2s; }
         .btn-history-toggle:hover { border-color: var(--text-muted); }
-
         .history-box { background: var(--bg-body); border-radius: 16px; padding: 20px; margin-top: 15px; }
         .history-item { background: var(--bg-card); padding: 14px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
 
-        /* MODAIS */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 20px;
-        }
-        .modal-card {
-            background: var(--bg-card); border-radius: 28px; padding: 35px 25px; width: 100%; max-width: 400px;
-            text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); animation: modalPop 0.3s ease;
-        }
+        /* ======== MODAIS ======== */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; z-index: 9999; padding: 20px; }
+        .modal-card { background: var(--bg-card); border-radius: 28px; padding: 35px 25px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); animation: modalPop 0.3s ease; }
         .modal-icon { width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 20px auto; }
         .modal-card h3 { font-size: 1.4rem; font-weight: 800; margin-bottom: 10px; }
         .modal-card p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 30px; line-height: 1.5; }
@@ -259,7 +128,38 @@
 </head>
 <body>
 
-    <!-- PAGAMENTO MODAL -->
+    <!-- ================= MODAIS PROFISSIONAIS (AVISOS E CONFIRMAÇÕES) ================= -->
+    
+    <!-- Modal de Alerta Genérico -->
+    <div id="modal-alerta" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-icon" style="background: #eff6ff; color: #2563eb;" id="icone-alerta">
+                <i class="fa-solid fa-bell"></i>
+            </div>
+            <h3 id="texto-alerta-titulo">Aviso</h3>
+            <p id="texto-alerta-mensagem">Mensagem do alerta vai aqui.</p>
+            <div class="modal-buttons">
+                <button class="modal-btn confirm" style="background: var(--primary);" onclick="fecharAlerta()">Entendi</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação Genérico (Excluir, Esvaziar) -->
+    <div id="modal-confirm" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-icon" style="background: var(--danger-bg); color: var(--danger);">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 id="texto-confirm-titulo">Confirmação</h3>
+            <p id="texto-confirm-mensagem">Deseja realmente fazer isso?</p>
+            <div class="modal-buttons">
+                <button class="modal-btn cancel" onclick="fecharConfirm()">Cancelar</button>
+                <button class="modal-btn confirm" style="background: var(--danger);" onclick="executarConfirm()">Sim, tenho certeza</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Pagamento Específico -->
     <div id="modal-pagamento" class="modal-overlay hidden">
         <div class="modal-card">
             <div class="modal-icon" style="background: var(--success-bg); color: var(--success);">
@@ -273,6 +173,23 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal Tutorial Mercado -->
+    <div id="modal-tutorial-mercado" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-icon" style="background: var(--warning-bg); color: var(--warning);">
+                <i class="fa-solid fa-basket-shopping"></i>
+            </div>
+            <h3>Controle de Mercado</h3>
+            <p><strong>Atenção:</strong> O orçamento e os produtos que você adicionar aqui <strong>NÃO</strong> descontam do seu saldo principal.<br><br>Essa aba serve exclusivamente para você planejar e controlar suas compras no supermercado sem misturar com as contas do mês!</p>
+            <div class="modal-buttons">
+                <button class="modal-btn confirm" style="background: var(--primary);" onclick="fecharTutorialMercado()">Começar as Compras</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= FIM DOS MODAIS ================= -->
+
 
     <!-- TELA DE LOGIN -->
     <div id="auth-screen" class="app-card">
@@ -502,14 +419,56 @@
         let graficoChartJs = null;
         let historicoAberto = false;
         let idParaPagar = null;
+        let funcConfirmacaoAtiva = null; 
 
         const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-        function obterMesAnoAtual() {
-            const dataAtual = new Date();
-            return `${nomesMeses[dataAtual.getMonth()]} de ${dataAtual.getFullYear()}`;
+        function obterMesAnoAtual() { return `${nomesMeses[new Date().getMonth()]} de ${new Date().getFullYear()}`; }
+
+        // ====== FUNÇÕES DOS MODAIS CUSTOMIZADOS ======
+        window.mostrarAlerta = function(mensagem, titulo = "Aviso") {
+            document.getElementById('texto-alerta-titulo').innerText = titulo;
+            document.getElementById('texto-alerta-mensagem').innerText = mensagem;
+            
+            const icone = document.getElementById('icone-alerta');
+            if (titulo === "Sucesso" || titulo === "Conta Criada") {
+                icone.style.background = 'var(--success-bg)';
+                icone.style.color = 'var(--success)';
+                icone.innerHTML = '<i class="fa-solid fa-check"></i>';
+            } else {
+                icone.style.background = '#eff6ff';
+                icone.style.color = '#2563eb';
+                icone.innerHTML = '<i class="fa-solid fa-bell"></i>';
+            }
+
+            document.getElementById('modal-alerta').classList.remove('hidden');
+        };
+
+        window.fecharAlerta = function() {
+            document.getElementById('modal-alerta').classList.add('hidden');
+        };
+
+        window.mostrarConfirmacao = function(mensagem, titulo, callbackFuncao) {
+            document.getElementById('texto-confirm-titulo').innerText = titulo;
+            document.getElementById('texto-confirm-mensagem').innerText = mensagem;
+            funcConfirmacaoAtiva = callbackFuncao;
+            document.getElementById('modal-confirm').classList.remove('hidden');
+        };
+
+        window.fecharConfirm = function() {
+            funcConfirmacaoAtiva = null;
+            document.getElementById('modal-confirm').classList.add('hidden');
+        };
+
+        window.executarConfirm = async function() {
+            if (funcConfirmacaoAtiva) await funcConfirmacaoAtiva();
+            window.fecharConfirm();
+        };
+
+        window.fecharTutorialMercado = function() {
+            document.getElementById('modal-tutorial-mercado').classList.add('hidden');
         }
 
-        // ALTERNAR ABAS (FINANCEIRO / MERCADO)
+        // ====== ALTERNAR ABAS ======
         window.alternarAbaApp = function(aba) {
             if(aba === 'dashboard') {
                 document.getElementById('btn-tab-dashboard').classList.add('active');
@@ -521,6 +480,11 @@
                 document.getElementById('btn-tab-mercado').classList.add('active');
                 document.getElementById('tab-dashboard').classList.add('hidden');
                 document.getElementById('tab-mercado').classList.remove('hidden');
+                
+                if (usuarioLogado && !localStorage.getItem('tutorialMercado_' + usuarioLogado.uid)) {
+                    document.getElementById('modal-tutorial-mercado').classList.remove('hidden');
+                    localStorage.setItem('tutorialMercado_' + usuarioLogado.uid, 'true');
+                }
             }
         };
 
@@ -543,7 +507,7 @@
         window.processarAuth = async function() {
             const email = document.getElementById('auth-email').value.trim();
             const senha = document.getElementById('auth-senha').value.trim();
-            if(!email || !senha) return alert("Preencha email e senha!");
+            if(!email || !senha) return window.mostrarAlerta("Preencha email e senha corretamente.", "Atenção");
 
             try {
                 await setPersistence(auth, browserLocalPersistence);
@@ -551,12 +515,15 @@
                 if(window.currentAuthMode === 'register') {
                     const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
                     await setDoc(doc(db, "usuarios", userCredential.user.uid), { salario: 0, orcamentoMercado: 0, carrinhoMercado: [] });
-                    alert("Conta criada! Pode entrar.");
+                    window.mostrarAlerta("Sua conta foi criada com sucesso! Você já pode organizar suas finanças.", "Conta Criada");
                 } else {
                     await signInWithEmailAndPassword(auth, email, senha);
                 }
             } catch (error) {
-                alert("Erro: " + error.message);
+                let msgErro = "Erro desconhecido.";
+                if (error.code === 'auth/invalid-credential') msgErro = "Email ou senha incorretos.";
+                else if (error.code === 'auth/email-already-in-use') msgErro = "Este email já está cadastrado.";
+                window.mostrarAlerta(msgErro, "Erro no Login");
             }
         };
 
@@ -575,15 +542,12 @@
             }
         });
 
-        window.fazerLogout = async function() {
-            await signOut(auth);
-            historicoAberto = false;
-        };
+        window.fazerLogout = async function() { await signOut(auth); historicoAberto = false; };
 
         // ====== FUNÇÕES FINANCEIRAS ======
         window.salvarSalario = async function() {
             const valor = parseFloat(document.getElementById('input-salario').value);
-            if(isNaN(valor) || valor < 0) return alert('Valor inválido');
+            if(isNaN(valor) || valor < 0) return window.mostrarAlerta("Digite um valor numérico válido para o salário.", "Valor Inválido");
             await setDoc(doc(db, "usuarios", usuarioLogado.uid), { salario: valor }, { merge: true });
             document.getElementById('input-salario').value = '';
             atualizarDashboard();
@@ -602,25 +566,20 @@
             const tipo = document.getElementById('tipo-conta').value;
             const editId = document.getElementById('edit-id').value;
 
-            if(!desc || isNaN(valor) || valor <= 0) return alert("Preencha descrição e valor.");
+            if(!desc || isNaN(valor) || valor <= 0) return window.mostrarAlerta("Preencha a descrição e um valor maior que zero.", "Dados Incompletos");
 
             let totalParcelas = 1;
             if(tipo === 'Parcelada') {
                 totalParcelas = parseInt(document.getElementById('qtd-parcelas').value);
-                if(isNaN(totalParcelas) || totalParcelas < 2) return alert("Número de parcelas inválido.");
+                if(isNaN(totalParcelas) || totalParcelas < 2) return window.mostrarAlerta("Para conta parcelada, digite um número de parcelas válido (maior que 1).", "Parcelas Inválidas");
             }
 
             let detalhe = tipo === 'Fixa' ? 'Conta Fixa' : (tipo === 'Unica' ? 'Única' : 'Parcela 1/' + totalParcelas);
 
             if (!editId) {
-                await addDoc(collection(db, "despesas"), {
-                    donoId: usuarioLogado.uid, descricao: desc, valor: valor, tipo: tipo,
-                    parcelaAtual: 1, totalParcelas: totalParcelas, pagoMes: null, detalhe: detalhe
-                });
+                await addDoc(collection(db, "despesas"), { donoId: usuarioLogado.uid, descricao: desc, valor: valor, tipo: tipo, parcelaAtual: 1, totalParcelas: totalParcelas, pagoMes: null, detalhe: detalhe });
             } else {
-                await updateDoc(doc(db, "despesas", editId), {
-                    descricao: desc, valor: valor, tipo: tipo, totalParcelas: totalParcelas, detalhe: detalhe
-                });
+                await updateDoc(doc(db, "despesas", editId), { descricao: desc, valor: valor, tipo: tipo, totalParcelas: totalParcelas, detalhe: detalhe });
                 window.cancelarEdicao();
             }
 
@@ -654,11 +613,12 @@
             document.getElementById('btn-cancelar-edicao').classList.add('hidden');
         };
 
-        window.excluirDespesa = async function(id) {
-            if(confirm("Deseja excluir esta conta?")) {
+        window.excluirDespesa = function(id) {
+            window.mostrarConfirmacao("Deseja realmente apagar esta conta do sistema?", "Excluir Conta", async () => {
                 await deleteDoc(doc(db, "despesas", id));
-                window.cancelarEdicao(); atualizarDashboard();
-            }
+                window.cancelarEdicao(); 
+                atualizarDashboard();
+            });
         };
 
         window.abrirModalPagamento = function(id) { idParaPagar = id; document.getElementById('modal-pagamento').classList.remove('hidden'); };
@@ -688,7 +648,7 @@
         // ====== FUNÇÕES DO MERCADO ======
         window.salvarOrcamentoMercado = async function() {
             const valor = parseFloat(document.getElementById('input-orcamento-mercado').value);
-            if(isNaN(valor) || valor < 0) return alert('Insira um orçamento válido');
+            if(isNaN(valor) || valor < 0) return window.mostrarAlerta("Digite um valor numérico válido para o orçamento do mercado.", "Orçamento Inválido");
             await setDoc(doc(db, "usuarios", usuarioLogado.uid), { orcamentoMercado: valor }, { merge: true });
             document.getElementById('input-orcamento-mercado').value = '';
             atualizarDashboard();
@@ -697,15 +657,14 @@
         window.adicionarProdutoMercado = async function() {
             const desc = document.getElementById('desc-produto').value.trim();
             const valor = parseFloat(document.getElementById('valor-produto').value);
-            if(!desc || isNaN(valor) || valor <= 0) return alert("Preencha o nome do produto e o valor!");
+            if(!desc || isNaN(valor) || valor <= 0) return window.mostrarAlerta("Escreva o nome do produto e coloque o preço.", "Item Incompleto");
 
             const produtoId = Date.now().toString();
             const novoProduto = { id: produtoId, desc: desc, valor: valor };
             
             await setDoc(doc(db, "usuarios", usuarioLogado.uid), { carrinhoMercado: arrayUnion(novoProduto) }, { merge: true });
 
-            document.getElementById('desc-produto').value = '';
-            document.getElementById('valor-produto').value = '';
+            document.getElementById('desc-produto').value = ''; document.getElementById('valor-produto').value = '';
             document.getElementById('desc-produto').focus();
             atualizarDashboard();
         };
@@ -716,11 +675,11 @@
             atualizarDashboard();
         };
 
-        window.esvaziarCarrinho = async function() {
-            if(confirm("Tem certeza que deseja esvaziar todo o seu carrinho de compras?")) {
+        window.esvaziarCarrinho = function() {
+            window.mostrarConfirmacao("Tem certeza que deseja esvaziar todo o seu carrinho de compras?", "Esvaziar Carrinho", async () => {
                 await setDoc(doc(db, "usuarios", usuarioLogado.uid), { carrinhoMercado: [] }, { merge: true });
                 atualizarDashboard();
-            }
+            });
         };
 
         // ====== ATUALIZA TUDO NA TELA ======
@@ -734,7 +693,6 @@
             const orcamento = userView.orcamentoMercado || 0;
             const carrinho = userView.carrinhoMercado || [];
             let totalGastoMercado = 0;
-
             const listaProdutos = document.getElementById('lista-produtos-mercado');
             listaProdutos.innerHTML = '';
 
@@ -743,17 +701,7 @@
             } else {
                 carrinho.forEach(prod => {
                     totalGastoMercado += prod.valor;
-                    listaProdutos.innerHTML += `
-                        <li class="expense-item" style="padding: 14px 18px; flex-direction: row; justify-content: space-between; align-items: center;">
-                            <div style="display: flex; flex-direction: column; gap: 4px;">
-                                <strong style="color: var(--text-main); font-size: 0.95rem;">${prod.desc}</strong>
-                                <span style="color: var(--danger); font-weight: 800; font-size: 0.9rem;">R$ ${prod.valor.toFixed(2)}</span>
-                            </div>
-                            <button class="btn-action delete" style="width: 34px; height: 34px;" title="Remover" onclick="removerProdutoMercado('${prod.id}', '${prod.desc}', ${prod.valor})">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </li>
-                    `;
+                    listaProdutos.innerHTML += `<li class="expense-item" style="padding: 14px 18px; flex-direction: row; justify-content: space-between; align-items: center;"><div style="display: flex; flex-direction: column; gap: 4px;"><strong style="color: var(--text-main); font-size: 0.95rem;">${prod.desc}</strong><span style="color: var(--danger); font-weight: 800; font-size: 0.9rem;">R$ ${prod.valor.toFixed(2)}</span></div><button class="btn-action delete" style="width: 34px; height: 34px;" title="Remover" onclick="removerProdutoMercado('${prod.id}', '${prod.desc}', ${prod.valor})"><i class="fa-solid fa-trash-can"></i></button></li>`;
                 });
             }
 
@@ -771,19 +719,11 @@
             progressBar.style.width = `${porcentagem}%`;
 
             if (totalGastoMercado >= orcamento && orcamento > 0) {
-                progressBar.style.background = '#ef4444';
-                avisoTexto.innerText = "LIMITE ATINGIDO!";
-                avisoTexto.style.color = '#fca5a5';
-                cardMercado.style.background = 'linear-gradient(135deg, #7f1d1d, #ef4444)';
+                progressBar.style.background = '#ef4444'; avisoTexto.innerText = "LIMITE ATINGIDO!"; avisoTexto.style.color = '#fca5a5'; cardMercado.style.background = 'linear-gradient(135deg, #7f1d1d, #ef4444)';
             } else if (porcentagem >= 80) {
-                progressBar.style.background = '#f59e0b';
-                avisoTexto.innerText = "Perto do limite!";
-                avisoTexto.style.color = '#fde047';
-                cardMercado.style.background = 'linear-gradient(135deg, #1e3a8a, #3b82f6)';
+                progressBar.style.background = '#f59e0b'; avisoTexto.innerText = "Perto do limite!"; avisoTexto.style.color = '#fde047'; cardMercado.style.background = 'linear-gradient(135deg, #1e3a8a, #3b82f6)';
             } else {
-                progressBar.style.background = '#10b981';
-                avisoTexto.innerText = "";
-                cardMercado.style.background = 'linear-gradient(135deg, #1e3a8a, #3b82f6)';
+                progressBar.style.background = '#10b981'; avisoTexto.innerText = ""; cardMercado.style.background = 'linear-gradient(135deg, #1e3a8a, #3b82f6)';
             }
 
             // --- ATUALIZAÇÕES DO FINANCEIRO ---
@@ -798,6 +738,7 @@
             despesasSnap.forEach(d => despesas.push({ id: d.id, ...d.data() }));
 
             if(despesas.length === 0) { listaHtml.innerHTML = '<li class="expense-item"><div style="text-align:center; color:#64748b; padding:10px;">Nenhuma conta no mês.</div></li>'; }
+            
             despesas.forEach(conta => {
                 const estaPago = (conta.pagoMes === mesAnoAtual);
                 totalContas += conta.valor;
@@ -805,7 +746,18 @@
                 let detalhe = conta.detalhe;
                 if (conta.tipo === 'Parcelada') { const restam = conta.totalParcelas - conta.parcelaAtual; detalhe = `Parc. ${conta.parcelaAtual}/${conta.totalParcelas}`; if (estaPago && restam > 0) detalhe += ` (+${restam})`; }
                 let classeCard = estaPago ? 'expense-item pago' : 'expense-item';
-                let conteudoAcoes = estaPago ? `<div class="badge-pago"><i class="fa-solid fa-check-circle"></i> Paga</div>` : `<div class="actions-group"><button class="btn-action pay" title="Pagar" onclick="abrirModalPagamento('${conta.id}')"><i class="fa-solid fa-check"></i></button><button class="btn-action edit" title="Editar" onclick="prepararEdicao('${conta.id}')"><i class="fa-solid fa-pen"></i></button><button class="btn-action delete" title="Excluir" onclick="excluirDespesa('${conta.id}')"><i class="fa-solid fa-trash-can"></i></button></div>`;
+                
+                // ---- BOTÃO COM TEXTO ATUALIZADO AQUI ----
+                let conteudoAcoes = estaPago 
+                    ? `<div class="badge-pago"><i class="fa-solid fa-check-circle"></i> Paga</div>` 
+                    : `<div class="actions-group">
+                        <button class="btn-action pay pay-text" title="Adicionar como paga" onclick="abrirModalPagamento('${conta.id}')">
+                            <i class="fa-solid fa-check"></i> Adicionar como paga
+                        </button>
+                        <button class="btn-action edit" title="Editar" onclick="prepararEdicao('${conta.id}')"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn-action delete" title="Excluir" onclick="excluirDespesa('${conta.id}')"><i class="fa-solid fa-trash-can"></i></button>
+                       </div>`;
+                
                 listaHtml.innerHTML += `<li class="${classeCard}"><div class="expense-header"><strong>${conta.descricao}</strong><div class="expense-value">R$ ${conta.valor.toFixed(2)}</div></div><div class="expense-footer"><span class="expense-tag">${detalhe}</span>${conteudoAcoes}</div></li>`;
             });
 
