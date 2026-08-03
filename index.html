@@ -6,85 +6,87 @@
     <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
     <link rel="manifest" href="/site.webmanifest">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>GP Tech Finance</title>
     <!-- Chart.js para o gráfico -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-body: #f1f5f9;
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --success: #10b981;
+            --success-bg: #d1fae5;
+            --danger: #ef4444;
+            --danger-bg: #fee2e2;
+            --warning: #f59e0b;
+            --warning-bg: #fef3c7;
+        }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background: #f4f7fc;
-            color: #0f172a;
+            background: var(--bg-body);
+            color: var(--text-main);
             min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start; /* Melhor para mobile */
             padding: 20px;
         }
 
         .app-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 28px;
-            box-shadow: 0 20px 40px -12px rgba(15, 23, 42, 0.08);
-            padding: 35px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            padding: 30px;
             width: 100%;
-            max-width: 580px;
-            transition: all 0.3s ease;
+            max-width: 540px;
             position: relative;
         }
 
-        .hidden {
-            display: none !important;
-        }
+        .hidden { display: none !important; }
 
         /* TELA DE AUTH */
-        .auth-header {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
+        .auth-header { text-align: center; margin-bottom: 30px; }
+        
         .auth-logo-box {
-            width: 64px;
-            height: 64px;
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
             color: #ffffff;
             border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.7rem;
-            margin: 0 auto 15px auto;
-            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.25);
+            font-size: 2rem;
+            margin: 0 auto 20px auto;
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
         }
 
-        .auth-header h1 {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: #0f172a;
-            margin-bottom: 6px;
-        }
-
-        .auth-header p {
-            color: #64748b;
-            font-size: 0.92rem;
-        }
+        .auth-header h1 { font-size: 1.7rem; font-weight: 800; margin-bottom: 8px; }
+        .auth-header p { color: var(--text-muted); font-size: 0.95rem; }
 
         .auth-tabs {
             display: flex;
-            background: #f1f5f9;
-            border-radius: 14px;
-            padding: 6px;
+            background: var(--bg-body);
+            border-radius: 12px;
+            padding: 4px;
             margin-bottom: 25px;
         }
 
@@ -94,27 +96,24 @@
             padding: 12px;
             cursor: pointer;
             border-radius: 10px;
-            color: #64748b;
+            color: var(--text-muted);
             font-weight: 600;
             font-size: 0.9rem;
-            transition: all 0.2s;
+            transition: 0.3s;
         }
 
         .auth-tab.active {
-            background: #ffffff;
-            color: #2563eb;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            background: var(--bg-card);
+            color: var(--primary);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
 
-        /* INPUTS MODERNOS COM ÍCONES */
-        .input-group {
-            margin-bottom: 18px;
-        }
-
+        /* INPUTS MODERNOS */
+        .input-group { margin-bottom: 20px; }
         .input-group label {
             display: block;
             font-size: 0.85rem;
-            color: #334155;
+            color: var(--text-main);
             margin-bottom: 8px;
             font-weight: 600;
         }
@@ -128,22 +127,21 @@
         .input-wrapper i {
             position: absolute;
             left: 16px;
-            color: #64748b;
-            font-size: 1rem;
-            pointer-events-none;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            pointer-events: none;
         }
 
-        .input-wrapper input, 
-        .input-wrapper select {
+        .input-wrapper input, .input-wrapper select {
             width: 100%;
-            padding: 15px 15px 15px 48px;
+            padding: 16px 16px 16px 48px;
             border-radius: 14px;
-            border: 1px solid #cbd5e1;
-            background: #ffffff;
-            color: #0f172a;
-            font-size: 0.95rem;
+            border: 2px solid transparent;
+            background: var(--bg-body);
+            color: var(--text-main);
+            font-size: 1rem;
             outline: none;
-            transition: all 0.2s;
+            transition: 0.2s ease;
             appearance: none;
         }
 
@@ -156,422 +154,376 @@
             padding-right: 45px;
         }
 
-        .input-wrapper input:focus, 
-        .input-wrapper select:focus {
-            border-color: #2563eb;
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+        .input-wrapper input:focus, .input-wrapper select:focus {
+            background: var(--bg-card);
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
         }
 
+        /* BOTÕES PRINCIPAIS */
         .btn-primary {
             width: 100%;
             padding: 16px;
             border-radius: 14px;
             border: none;
-            background: #2563eb;
+            background: var(--primary);
             color: white;
             font-weight: 700;
-            font-size: 0.95rem;
+            font-size: 1rem;
             cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
-            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+            transition: 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
         }
 
-        .btn-primary:hover {
-            background: #1d4ed8;
-        }
+        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
+        .btn-primary:active { transform: translateY(1px); }
 
-        .btn-primary:active {
-            transform: scale(0.98);
-        }
-
-        /* TELA PRINCIPAL */
+        /* HEADER DO APP */
         .app-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 25px;
-            padding-bottom: 18px;
-            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .app-header h2 {
-            font-size: 1rem;
-            color: #64748b;
-            font-weight: 500;
-        }
-
-        .app-header h2 strong {
-            font-weight: 700;
-            color: #0f172a;
-        }
+        .app-header h2 { font-size: 1.1rem; color: var(--text-muted); font-weight: 500; }
+        .app-header h2 strong { font-weight: 800; color: var(--text-main); }
 
         .btn-logout {
-            background: #fef2f2;
-            color: #dc2626;
+            background: var(--danger-bg);
+            color: var(--danger);
             border: none;
-            padding: 8px 14px;
-            border-radius: 10px;
+            padding: 10px 14px;
+            border-radius: 12px;
             cursor: pointer;
-            font-weight: 600;
+            font-weight: 700;
             font-size: 0.85rem;
             display: flex;
             align-items: center;
             gap: 6px;
-            transition: background 0.2s;
         }
 
-        .btn-logout:hover {
-            background: #fee2e2;
-        }
-
-        /* ABAS DE PERFIS */
-        .user-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
-        }
-
+        /* ABAS DE USUÁRIOS */
+        .user-tabs { display: flex; gap: 10px; margin-bottom: 25px; }
         .user-tab-btn {
             flex: 1;
-            padding: 12px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 14px;
-            color: #64748b;
-            font-weight: 600;
+            padding: 14px;
+            background: var(--bg-body);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            color: var(--text-muted);
+            font-weight: 700;
             font-size: 0.9rem;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: all 0.2s;
+            transition: 0.2s;
         }
-
         .user-tab-btn.active {
-            background: #eff6ff;
-            border-color: #2563eb;
-            color: #2563eb;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
+            background: var(--bg-card);
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
         }
 
-        /* CARDS DE RESUMO */
+        /* GRID DE DASHBOARD */
         .dashboard-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
 
         .dash-card {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            padding: 18px;
-            border-radius: 18px;
-            text-align: left;
-        }
-
-        .dash-card.balance {
-            grid-column: span 2;
-            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-            border-color: #bbf7d0;
-        }
-
-        .dash-card.balance.negative {
-            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
-            border-color: #fecaca;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
         }
 
         .dash-card h3 {
-            font-size: 0.75rem;
-            color: #64748b;
+            font-size: 0.8rem;
+            color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             font-weight: 700;
         }
 
-        .dash-card p {
-            font-size: 1.4rem;
-            font-weight: 800;
-            color: #0f172a;
+        .dash-card p { font-size: 1.4rem; font-weight: 800; color: var(--text-main); }
+
+        /* CARTÃO DE SALDO (DESTAQUE) */
+        .dash-card.balance {
+            grid-column: span 2;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            border: none;
+            color: white;
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+        }
+        .dash-card.balance h3 { color: rgba(255, 255, 255, 0.8); }
+        .dash-card.balance p { color: #ffffff; font-size: 2.2rem; }
+        
+        .dash-card.balance.negative {
+            background: linear-gradient(135deg, #7f1d1d, #ef4444);
+            box-shadow: 0 10px 20px rgba(239, 68, 68, 0.2);
         }
 
-        .dash-card.balance p {
-            font-size: 1.8rem;
-            color: #16a34a;
-        }
-        .dash-card.balance.negative p {
-            color: #dc2626;
-        }
-
-        /* SEÇÕES E LISTAS */
-        .section-title {
-            font-size: 0.95rem;
-            font-weight: 700;
-            margin-bottom: 15px;
-            color: #1e293b;
-            border-bottom: 1px solid #f1f5f9;
-            padding-bottom: 10px;
-            margin-top: 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .expense-list {
-            list-style: none;
-            max-height: 260px;
-            overflow-y: auto;
-            padding-right: 4px;
-        }
-
-        .expense-list::-webkit-scrollbar { width: 4px; }
-        .expense-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-
-        .expense-item {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            padding: 14px 16px;
-            border-radius: 14px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            transition: all 0.2s;
-        }
-
-        .expense-item.pago {
-            background: #f0fdf4 !important;
-            border-color: #bbf7d0 !important;
-        }
-
-        .expense-item.pago .expense-value {
-            color: #16a34a !important;
-        }
-
-        .expense-item .info strong {
-            display: block;
-            font-size: 0.95rem;
-            color: #0f172a;
-            margin-bottom: 2px;
-        }
-
-        .expense-item .info small {
-            color: #64748b;
-            font-size: 0.75rem;
-            background: #e2e8f0;
-            padding: 2px 8px;
-            border-radius: 6px;
-            font-weight: 500;
-        }
-
-        .expense-item.pago .info small {
-            background: #dcfce7;
-            color: #16a34a;
-            font-weight: 700;
-        }
-
-        .expense-right {
-            display: flex;
-            align-items: center;
+        /* LAYOUT DE FORMULÁRIO RESPONSIVO */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 15px;
         }
 
-        .expense-value {
+        /* TÍTULOS DE SEÇÃO */
+        .section-title {
+            font-size: 1.1rem;
             font-weight: 800;
-            color: #dc2626;
-            font-size: 1rem;
-        }
-
-        /* BOTÕES DE AÇÃO */
-        .actions-group {
+            margin-bottom: 15px;
+            color: var(--text-main);
+            margin-top: 35px;
             display: flex;
-            gap: 6px;
+            align-items: center;
+            gap: 8px;
         }
 
+        /* =========================================
+           NOVO DESIGN DA LISTA DE DESPESAS 
+           ========================================= */
+        .expense-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .expense-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 18px;
+            border-radius: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px; /* Separa cima e baixo */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            transition: 0.2s;
+        }
+
+        .expense-item.pago {
+            background: #f8fafc;
+            border-color: var(--success-bg);
+        }
+
+        .expense-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .expense-header strong {
+            font-size: 1.05rem;
+            color: var(--text-main);
+            line-height: 1.3;
+        }
+
+        .expense-value {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--danger);
+            white-space: nowrap;
+        }
+
+        .expense-item.pago .expense-value { color: var(--success); }
+
+        .expense-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px dashed var(--border-color);
+            padding-top: 12px;
+        }
+
+        .expense-tag {
+            background: var(--bg-body);
+            color: var(--text-muted);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .expense-item.pago .expense-tag {
+            background: var(--success-bg);
+            color: #047857;
+        }
+
+        /* BOTÕES DE AÇÃO DOS CARTÕES */
+        .actions-group { display: flex; gap: 8px; }
+        
         .btn-action {
-            width: 34px;
-            height: 34px;
+            width: 38px;
+            height: 38px;
             border-radius: 10px;
             border: none;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.85rem;
-            transition: all 0.2s;
+            font-size: 1rem;
+            transition: 0.2s;
         }
 
-        .btn-action.pay { background: #dcfce7; color: #16a34a; }
-        .btn-action.pay:hover { background: #16a34a; color: white; }
+        .btn-action.pay { background: var(--success-bg); color: var(--success); }
+        .btn-action.pay:hover { background: var(--success); color: white; }
 
-        .btn-action.edit { background: #fef9c3; color: #ca8a04; }
-        .btn-action.edit:hover { background: #ca8a04; color: white; }
+        .btn-action.edit { background: var(--warning-bg); color: var(--warning); }
+        .btn-action.edit:hover { background: var(--warning); color: white; }
 
-        .btn-action.delete { background: #fee2e2; color: #dc2626; }
-        .btn-action.delete:hover { background: #dc2626; color: white; }
+        .btn-action.delete { background: var(--danger-bg); color: var(--danger); }
+        .btn-action.delete:hover { background: var(--danger); color: white; }
+
+        .badge-pago {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            color: var(--success);
+            font-weight: 700;
+        }
 
         .chart-container {
             width: 100%;
-            max-width: 220px;
-            margin: 0 auto 20px auto;
+            max-width: 240px;
+            margin: 0 auto 30px auto;
         }
 
         /* BOTÃO DO HISTÓRICO */
         .btn-history-toggle {
             width: 100%;
-            padding: 15px;
-            background: #f1f5f9;
-            border: 1px solid #cbd5e1;
+            padding: 16px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
             border-radius: 14px;
-            color: #334155;
+            color: var(--text-main);
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            transition: all 0.2s;
+            margin-top: 25px;
+            transition: 0.2s;
+        }
+        .btn-history-toggle:hover { border-color: var(--text-muted); }
+
+        .history-box {
+            background: var(--bg-body);
+            border-radius: 16px;
+            padding: 20px;
             margin-top: 15px;
         }
 
-        .btn-history-toggle:hover {
-            background: #e2e8f0;
-            border-color: #94a3b8;
-        }
-
-        .history-box {
-            background: #f8fafc;
-            border: 1px solid #cbd5e1;
-            border-radius: 16px;
-            padding: 15px;
-            margin-top: 10px;
-            max-height: 250px;
-            overflow-y: auto;
-        }
-
         .history-item {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            padding: 10px 12px;
-            border-radius: 10px;
-            margin-bottom: 8px;
+            background: var(--bg-card);
+            padding: 14px;
+            border-radius: 12px;
+            margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.85rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
 
-        /* MODAL GERAL */
+        /* MODAIS */
         .modal-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(15, 23, 42, 0.5);
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(4px);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 1000;
+            padding: 20px;
         }
 
         .modal-card {
-            background: #ffffff;
-            border-radius: 24px;
-            padding: 30px;
-            width: 90%;
-            max-width: 420px;
+            background: var(--bg-card);
+            border-radius: 28px;
+            padding: 35px 25px;
+            width: 100%;
+            max-width: 400px;
             text-align: center;
-            box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
             animation: modalPop 0.3s ease;
         }
 
         .modal-icon {
-            width: 64px;
-            height: 64px;
-            background: #eff6ff;
-            color: #2563eb;
+            width: 70px; height: 70px;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.7rem;
-            margin: 0 auto 15px auto;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem;
+            margin: 0 auto 20px auto;
         }
 
-        .modal-card h3 {
-            font-size: 1.3rem;
-            font-weight: 800;
-            color: #0f172a;
-            margin-bottom: 8px;
-        }
+        .modal-card h3 { font-size: 1.4rem; font-weight: 800; margin-bottom: 10px; }
+        .modal-card p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 30px; line-height: 1.5; }
 
-        .modal-card p {
-            color: #64748b;
-            font-size: 0.95rem;
-            margin-bottom: 25px;
-            line-height: 1.5;
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
+        .modal-buttons { display: flex; gap: 12px; }
         .modal-btn {
-            flex: 1;
-            padding: 14px;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            cursor: pointer;
-            border: none;
-            transition: all 0.2s;
+            flex: 1; padding: 15px; border-radius: 14px; font-weight: 700; font-size: 0.95rem; cursor: pointer; border: none; transition: 0.2s;
         }
-
-        .modal-btn.cancel {
-            background: #f1f5f9;
-            color: #64748b;
-        }
-        .modal-btn.cancel:hover { background: #e2e8f0; }
-
-        .modal-btn.confirm {
-            background: #2563eb;
-            color: white;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
-        }
-        .modal-btn.confirm:hover { background: #1d4ed8; }
+        .modal-btn.cancel { background: var(--bg-body); color: var(--text-muted); }
+        .modal-btn.confirm { background: var(--primary); color: white; }
 
         @keyframes modalPop {
             from { transform: scale(0.9); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
         }
+
+        /* AJUSTES PARA CELULAR */
+        @media (max-width: 500px) {
+            body { padding: 0; background: var(--bg-card); }
+            .app-card {
+                border: none;
+                border-radius: 0;
+                box-shadow: none;
+                padding: 20px;
+                min-height: 100vh;
+            }
+            .form-row { grid-template-columns: 1fr; gap: 0; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- ================= MODAL DE TUTORIAL GUIADO ================= -->
+    <!-- TUTORIAL -->
     <div id="modal-tutorial" class="modal-overlay hidden">
         <div class="modal-card">
-            <div class="modal-icon" id="tutorial-icon">
+            <div class="modal-icon" id="tutorial-icon" style="background: #eff6ff; color: #2563eb;">
                 <i class="fa-solid fa-wallet"></i>
             </div>
-            <h3 id="tutorial-titulo">Bem-vindo ao GP Tech Finance!</h3>
-            <p id="tutorial-texto">Aqui você controla suas finanças de forma simples, inteligente e totalmente segura.</p>
+            <h3 id="tutorial-titulo">Bem-vindo!</h3>
+            <p id="tutorial-texto">Gerencie suas finanças na nuvem.</p>
             
-            <div style="display: flex; justify-content: center; gap: 6px; margin-bottom: 20px;" id="tutorial-dots">
-                <span style="width: 8px; height: 8px; border-radius: 50%; background: #2563eb;" class="dot"></span>
-                <span style="width: 8px; height: 8px; border-radius: 50%; background: #cbd5e1;" class="dot"></span>
-                <span style="width: 8px; height: 8px; border-radius: 50%; background: #cbd5e1;" class="dot"></span>
-                <span style="width: 8px; height: 8px; border-radius: 50%; background: #cbd5e1;" class="dot"></span>
+            <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 25px;" id="tutorial-dots">
+                <span class="dot" style="width: 8px; height: 8px; border-radius: 50%; background: #2563eb;"></span>
+                <span class="dot" style="width: 8px; height: 8px; border-radius: 50%; background: #cbd5e1;"></span>
+                <span class="dot" style="width: 8px; height: 8px; border-radius: 50%; background: #cbd5e1;"></span>
+                <span class="dot" style="width: 8px; height: 8px; border-radius: 50%; background: #cbd5e1;"></span>
             </div>
 
             <div class="modal-buttons">
@@ -581,27 +533,25 @@
         </div>
     </div>
 
-    <!-- ================= MODAL DE CONFIRMAÇÃO DE PAGAMENTO ================= -->
+    <!-- PAGAMENTO -->
     <div id="modal-pagamento" class="modal-overlay hidden">
         <div class="modal-card">
-            <div class="modal-icon" style="background: #dcfce7; color: #16a34a;">
+            <div class="modal-icon" style="background: var(--success-bg); color: var(--success);">
                 <i class="fa-solid fa-circle-check"></i>
             </div>
             <h3>Confirmar Pagamento</h3>
-            <p id="modal-texto-pergunta">Deseja realmente marcar esta conta como paga?</p>
+            <p>Deseja marcar esta conta como paga?</p>
             <div class="modal-buttons">
                 <button class="modal-btn cancel" onclick="fecharModalPagamento()">Cancelar</button>
-                <button class="modal-btn confirm" style="background: #16a34a;" onclick="executarPagamento()">Sim, Pagar</button>
+                <button class="modal-btn confirm" style="background: var(--success);" onclick="executarPagamento()">Sim, Pagar</button>
             </div>
         </div>
     </div>
 
-    <!-- ================= TELA DE AUTENTICAÇÃO ================= -->
+    <!-- TELA DE LOGIN -->
     <div id="auth-screen" class="app-card">
         <div class="auth-header">
-            <div class="auth-logo-box">
-                <i class="fa-solid fa-wallet"></i>
-            </div>
+            <div class="auth-logo-box"><i class="fa-solid fa-wallet"></i></div>
             <h1>GP Tech Finance</h1>
             <p>Gestão financeira inteligente</p>
         </div>
@@ -615,12 +565,12 @@
             <label>Seu Email</label>
             <div class="input-wrapper">
                 <i class="fa-solid fa-envelope"></i>
-                <input type="email" id="auth-email" placeholder="Seu Email">
+                <input type="email" id="auth-email" placeholder="nome@email.com">
             </div>
         </div>
         
         <div class="input-group">
-            <label>Senha de Acesso</label>
+            <label>Senha</label>
             <div class="input-wrapper">
                 <i class="fa-solid fa-lock"></i>
                 <input type="password" id="auth-senha" placeholder="••••••••">
@@ -628,26 +578,22 @@
         </div>
 
         <button class="btn-primary" id="btn-auth" onclick="processarAuth()">
-            <span>Entrar no Painel</span>
-            <i class="fa-solid fa-arrow-right"></i>
+            <span>Entrar no Painel</span> <i class="fa-solid fa-arrow-right"></i>
         </button>
     </div>
 
-
-    <!-- ================= TELA PRINCIPAL (DASHBOARD) ================= -->
+    <!-- TELA PRINCIPAL -->
     <div id="app-screen" class="app-card hidden">
         
         <div class="app-header">
-            <h2>Bem-vindo, <strong id="nome-usuario-logado">Usuário</strong></h2>
+            <h2>Olá, <strong id="nome-usuario-logado">Usuário</strong></h2>
             <button class="btn-logout" onclick="fazerLogout()">
                 <i class="fa-solid fa-power-off"></i> Sair
             </button>
         </div>
 
-        <!-- Abas de Perfis -->
         <div class="user-tabs" id="user-tabs-container"></div>
 
-        <!-- Atualizar Salário -->
         <div id="area-salario" class="input-group">
             <label>Seu Salário Líquido Mensal</label>
             <div style="display: flex; gap: 10px;">
@@ -655,46 +601,44 @@
                     <i class="fa-solid fa-dollar-sign"></i>
                     <input type="number" id="input-salario" placeholder="0,00" style="margin-bottom: 0;">
                 </div>
-                <button class="btn-primary" style="margin-top: 0; width: auto; padding: 0 22px;" onclick="salvarSalario()">Salvar</button>
+                <button class="btn-primary" style="margin-top: 0; width: auto; padding: 0 24px;" onclick="salvarSalario()">Salvar</button>
             </div>
         </div>
 
-        <!-- Resumo Financeiro -->
+        <!-- DASHBOARD -->
         <div class="dashboard-grid">
-            <div class="dash-card">
-                <h3>Salário Líquido</h3>
-                <p id="display-renda">R$ 0,00</p>
-            </div>
-            <div class="dash-card">
-                <h3>Total de Contas</h3>
-                <p id="display-despesas" style="color: #dc2626;">R$ 0,00</p>
-            </div>
             <div class="dash-card balance" id="card-saldo">
-                <h3>Saldo Livre (O que sobra)</h3>
+                <h3>Saldo Livre Mensal</h3>
                 <p id="display-saldo">R$ 0,00</p>
             </div>
+            <div class="dash-card">
+                <h3>Receitas</h3>
+                <p id="display-renda" style="color: var(--success); font-size: 1.2rem;">R$ 0,00</p>
+            </div>
+            <div class="dash-card">
+                <h3>Despesas</h3>
+                <p id="display-despesas" style="color: var(--danger); font-size: 1.2rem;">R$ 0,00</p>
+            </div>
         </div>
 
-        <!-- Gráfico -->
         <div class="chart-container">
             <canvas id="meuGrafico"></canvas>
         </div>
 
-        <!-- Adicionar / Editar Despesa -->
+        <!-- NOVA CONTA -->
         <div id="area-nova-conta">
-            <div class="section-title" id="titulo-form-conta">Adicionar Nova Conta</div>
-            
+            <div class="section-title" id="titulo-form-conta"><i class="fa-solid fa-plus-circle"></i> Adicionar Conta</div>
             <input type="hidden" id="edit-id" value="">
 
             <div class="input-group">
-                <label>Nome da Conta</label>
+                <label>Descrição</label>
                 <div class="input-wrapper">
                     <i class="fa-solid fa-tag"></i>
                     <input type="text" id="desc-conta" placeholder="Ex: Aluguel, Supermercado">
                 </div>
             </div>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="form-row">
                 <div class="input-group">
                     <label>Valor (R$)</label>
                     <div class="input-wrapper">
@@ -708,7 +652,7 @@
                         <i class="fa-solid fa-sliders"></i>
                         <select id="tipo-conta" onchange="verificarParcela()">
                             <option value="Unica">Compra Única</option>
-                            <option value="Fixa">Conta Fixa mensal</option>
+                            <option value="Fixa">Fixa Mensal</option>
                             <option value="Parcelada">Parcelada</option>
                         </select>
                     </div>
@@ -724,34 +668,31 @@
             </div>
             
             <button class="btn-primary" id="btn-salvar-conta" onclick="salvarDespesa()">
-                <i class="fa-solid fa-plus"></i> Registrar Despesa
+                Registrar Despesa
             </button>
-            <button class="btn-primary hidden" id="btn-cancelar-edicao" style="background: #64748b; margin-top: 8px;" onclick="cancelarEdicao()">Cancelar Edição</button>
+            <button class="btn-primary hidden" id="btn-cancelar-edicao" style="background: var(--text-muted); margin-top: 10px;" onclick="cancelarEdicao()">Cancelar Edição</button>
         </div>
 
-        <!-- Lista de Despesas Atuais -->
-        <div class="section-title" id="titulo-lista">Contas Pendentes</div>
+        <!-- LISTA -->
+        <div class="section-title" id="titulo-lista"><i class="fa-solid fa-list"></i> Contas do Mês</div>
         <ul class="expense-list" id="lista-contas"></ul>
 
-        <!-- Botão para Exibir o Histórico -->
+        <!-- HISTÓRICO -->
         <button class="btn-history-toggle" onclick="toggleHistorico()">
             <i class="fa-solid fa-clock-rotate-left"></i>
-            <span id="texto-botao-historico">Ver Histórico de Contas Pagas</span>
+            <span id="texto-botao-historico">Ver Histórico de Pagamentos</span>
         </button>
 
-        <!-- Container do Histórico -->
         <div id="container-historico" class="history-box hidden">
-            <div style="font-size: 0.85rem; font-weight: 700; color: #2563eb; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px;">
-                <i class="fa-solid fa-calendar-days"></i> Registros de Pagamento
+            <div style="font-size: 0.9rem; font-weight: 800; color: var(--primary); margin-bottom: 15px; text-transform: uppercase;">
+                Registros Salvos
             </div>
-            <div id="lista-historico">
-                <p style="color: #64748b; font-size: 0.85rem; text-align: center; padding: 10px;">Nenhum histórico registrado.</p>
-            </div>
+            <div id="lista-historico"></div>
         </div>
 
     </div>
 
-    <!-- Script principal integrado com Firebase Firestore e Firebase Auth -->
+    <!-- SCRIPT FIREBASE E LÓGICA -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, setDoc, getDoc, query, where } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
@@ -769,9 +710,8 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        const auth = getAuth(app); // Iniciando o Auth
+        const auth = getAuth(app);
 
-        // Estado Global
         let usuarioLogado = null; 
         let usuarioVisualizado = null; 
         let graficoChartJs = null;
@@ -780,10 +720,10 @@
         let passoTutorialAtual = 0;
 
         const passosTutorial = [
-            { icone: "fa-solid fa-wallet", titulo: "Bem-vindo ao GP Tech Finance!", texto: "Este sistema gerencia suas finanças na nuvem com 100% de segurança e privacidade." },
-            { icone: "fa-solid fa-coins", titulo: "Salário e Saldo Livre", texto: "Defina seu salário. O app calcula automaticamente o saldo livre em tempo real." },
-            { icone: "fa-solid fa-sliders", titulo: "Tipos de Contas", texto: "Cadastre contas únicas, fixas mensais ou parceladas com avanço automático." },
-            { icone: "fa-solid fa-circle-check", titulo: "Pagamentos e Histórico", texto: "Marque contas como pagas e consulte o histórico organizado por mês." }
+            { icone: "fa-solid fa-wallet", titulo: "Bem-vindo!", texto: "Gerencie suas finanças na nuvem com 100% de segurança." },
+            { icone: "fa-solid fa-coins", titulo: "Salário e Saldo", texto: "Defina seu salário e veja seu saldo livre em tempo real." },
+            { icone: "fa-solid fa-sliders", titulo: "Tipos de Contas", texto: "Cadastre contas fixas ou parceladas com avanço automático." },
+            { icone: "fa-solid fa-check", titulo: "Pagamentos", texto: "Marque contas como pagas e consulte o histórico." }
         ];
 
         const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
@@ -793,7 +733,6 @@
             return `${nomesMeses[dataAtual.getMonth()]} de ${dataAtual.getFullYear()}`;
         }
 
-        // Expondo funções globais para os botões do HTML
         window.mudarModoAuth = function(modo) {
             const tabLogin = document.getElementById('tab-login');
             const tabRegister = document.getElementById('tab-register');
@@ -802,12 +741,12 @@
             if(modo === 'login') {
                 tabLogin.classList.add('active');
                 tabRegister.classList.remove('active');
-                btnAuth.querySelector('span').innerText = 'Entrar no Painel';
+                btnAuth.innerHTML = '<span>Entrar no Painel</span> <i class="fa-solid fa-arrow-right"></i>';
                 window.currentAuthMode = 'login';
             } else {
                 tabRegister.classList.add('active');
                 tabLogin.classList.remove('active');
-                btnAuth.querySelector('span').innerText = 'Criar Minha Conta';
+                btnAuth.innerHTML = '<span>Criar Minha Conta</span> <i class="fa-solid fa-user-plus"></i>';
                 window.currentAuthMode = 'register';
             }
         };
@@ -816,51 +755,38 @@
         window.processarAuth = async function() {
             const email = document.getElementById('auth-email').value.trim();
             const senha = document.getElementById('auth-senha').value.trim();
-
             if(!email || !senha) return alert("Preencha email e senha!");
 
             try {
                 if(window.currentAuthMode === 'register') {
-                    // Cria a conta de verdade
                     const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
                     await setDoc(doc(db, "usuarios", userCredential.user.uid), { email: email, salario: 0 });
-                    alert("Conta criada com sucesso!");
+                    alert("Conta criada! Pode entrar.");
                 } else {
-                    // Faz o login de verdade
                     await signInWithEmailAndPassword(auth, email, senha);
                 }
             } catch (error) {
-                console.error(error);
-                alert("Erro ao autenticar: " + error.message);
+                alert("Erro: " + error.message);
             }
         };
 
-        // Escuta as mudanças de login automaticamente (se o usuário logou ou saiu)
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // Usuário logado
                 usuarioLogado = user;
                 usuarioVisualizado = user.email; 
-                
                 document.getElementById('auth-email').value = '';
                 document.getElementById('auth-senha').value = '';
-
                 document.getElementById('auth-screen').classList.add('hidden');
                 document.getElementById('app-screen').classList.remove('hidden');
                 
-                // Formata o email para mostrar só a parte antes do @
-                const nomeExibicao = user.email.split('@')[0];
-                document.getElementById('nome-usuario-logado').innerText = nomeExibicao;
-                
+                document.getElementById('nome-usuario-logado').innerText = user.email.split('@')[0];
                 await carregarUsuariosEGestionar();
                 
-                // Exibe o tutorial só na primeira vez
                 if(!localStorage.getItem('tutorialVisto_' + user.uid)) {
                     abrirTutorial();
                     localStorage.setItem('tutorialVisto_' + user.uid, 'true');
                 }
             } else {
-                // Usuário deslogado
                 usuarioLogado = null;
                 document.getElementById('app-screen').classList.add('hidden');
                 document.getElementById('auth-screen').classList.remove('hidden');
@@ -868,13 +794,7 @@
         });
 
         async function carregarUsuariosEGestionar() {
-            // Como agora o sistema tem segurança onde um não vê o outro, mantivemos as abas na tela, 
-            // mas carregamos apenas o perfil de quem está logado (Meu Painel) para não quebrar a regra de segurança do Firestore
-            window.listaUsuariosCache = [{
-                email: usuarioLogado.email,
-                uid: usuarioLogado.uid
-            }];
-
+            window.listaUsuariosCache = [{ email: usuarioLogado.email, uid: usuarioLogado.uid }];
             gerarAbasUsuarios();
             atualizarDashboard();
         }
@@ -887,14 +807,11 @@
         function gerarAbasUsuarios() {
             const container = document.getElementById('user-tabs-container');
             container.innerHTML = '';
-
             window.listaUsuariosCache.forEach(u => {
                 const isAtivo = u.email === usuarioVisualizado ? 'active' : '';
-                const textoAba = u.email === usuarioLogado.email ? 'Meu Painel' : `Painel de ${u.email.split('@')[0]}`;
-                
                 container.innerHTML += `
                     <button class="user-tab-btn ${isAtivo}" onclick="trocarVisualizacao('${u.email}')">
-                        <i class="fa-solid fa-user-circle"></i> ${textoAba}
+                        <i class="fa-solid fa-user-circle"></i> Meu Painel
                     </button>
                 `;
             });
@@ -910,10 +827,8 @@
         window.salvarSalario = async function() {
             const valor = parseFloat(document.getElementById('input-salario').value);
             if(isNaN(valor) || valor < 0) return alert('Valor inválido');
-            
             const userRef = doc(db, "usuarios", usuarioLogado.uid);
-            await updateDoc(userRef, { salario: valor });
-
+            await setDoc(userRef, { salario: valor }, { merge: true });
             document.getElementById('input-salario').value = '';
             atualizarDashboard();
         };
@@ -921,12 +836,8 @@
         window.verificarParcela = function() {
             const tipo = document.getElementById('tipo-conta').value;
             const divParcelas = document.getElementById('div-parcelas');
-            if(tipo === 'Parcelada') {
-                divParcelas.classList.remove('hidden');
-            } else {
-                divParcelas.classList.add('hidden');
-                document.getElementById('qtd-parcelas').value = '';
-            }
+            if(tipo === 'Parcelada') { divParcelas.classList.remove('hidden'); } 
+            else { divParcelas.classList.add('hidden'); document.getElementById('qtd-parcelas').value = ''; }
         };
 
         window.salvarDespesa = async function() {
@@ -935,35 +846,27 @@
             const tipo = document.getElementById('tipo-conta').value;
             const editId = document.getElementById('edit-id').value;
 
-            if(!desc || isNaN(valor) || valor <= 0) return alert("Preencha descrição e valor corretamente.");
+            if(!desc || isNaN(valor) || valor <= 0) return alert("Preencha descrição e valor.");
 
             let totalParcelas = 1;
             if(tipo === 'Parcelada') {
                 totalParcelas = parseInt(document.getElementById('qtd-parcelas').value);
-                if(isNaN(totalParcelas) || totalParcelas < 2) return alert("Digite o número de parcelas válido.");
+                if(isNaN(totalParcelas) || totalParcelas < 2) return alert("Número de parcelas inválido.");
             }
 
-            let detalhe = tipo === 'Fixa' ? 'Conta Fixa' : (tipo === 'Unica' ? 'Compra Única' : 'Parcelada 1/' + totalParcelas);
+            let detalhe = tipo === 'Fixa' ? 'Conta Fixa' : (tipo === 'Unica' ? 'Única' : 'Parcela 1/' + totalParcelas);
 
             if (!editId) {
                 await addDoc(collection(db, "despesas"), {
-                    donoId: usuarioLogado.uid, // Proteção real via ID
-                    descricao: desc,
-                    valor: valor,
-                    tipo: tipo,
-                    parcelaAtual: 1,
-                    totalParcelas: totalParcelas,
-                    pagoMes: null,
-                    detalhe: detalhe
+                    donoId: usuarioLogado.uid,
+                    descricao: desc, valor: valor, tipo: tipo,
+                    parcelaAtual: 1, totalParcelas: totalParcelas,
+                    pagoMes: null, detalhe: detalhe
                 });
             } else {
-                const despesaRef = doc(db, "despesas", editId);
-                await updateDoc(despesaRef, {
-                    descricao: desc,
-                    valor: valor,
-                    tipo: tipo,
-                    totalParcelas: totalParcelas,
-                    detalhe: detalhe
+                await updateDoc(doc(db, "despesas", editId), {
+                    descricao: desc, valor: valor, tipo: tipo,
+                    totalParcelas: totalParcelas, detalhe: detalhe
                 });
                 window.cancelarEdicao();
             }
@@ -973,7 +876,6 @@
             document.getElementById('qtd-parcelas').value = '';
             document.getElementById('tipo-conta').value = 'Unica';
             window.verificarParcela();
-            
             atualizarDashboard();
         };
 
@@ -988,15 +890,12 @@
             document.getElementById('edit-id').value = id;
 
             window.verificarParcela();
-            if(conta.tipo === 'Parcelada') {
-                document.getElementById('qtd-parcelas').value = conta.totalParcelas;
-            }
+            if(conta.tipo === 'Parcelada') document.getElementById('qtd-parcelas').value = conta.totalParcelas;
 
-            document.getElementById('titulo-form-conta').innerText = 'Editar Conta';
-            document.getElementById('btn-salvar-conta').innerHTML = '<i class="fa-solid fa-check"></i> Salvar Alterações';
+            document.getElementById('titulo-form-conta').innerHTML = '<i class="fa-solid fa-pen"></i> Editar Conta';
+            document.getElementById('btn-salvar-conta').innerHTML = 'Salvar Alterações';
             document.getElementById('btn-cancelar-edicao').classList.remove('hidden');
-
-            window.scrollTo({ top: 350, behavior: 'smooth' });
+            window.scrollTo({ top: 300, behavior: 'smooth' });
         };
 
         window.cancelarEdicao = function() {
@@ -1007,28 +906,21 @@
             document.getElementById('edit-id').value = '';
             window.verificarParcela();
 
-            document.getElementById('titulo-form-conta').innerText = 'Adicionar Nova Conta';
-            document.getElementById('btn-salvar-conta').innerHTML = '<i class="fa-solid fa-plus"></i> Registrar Despesa';
+            document.getElementById('titulo-form-conta').innerHTML = '<i class="fa-solid fa-plus-circle"></i> Adicionar Conta';
+            document.getElementById('btn-salvar-conta').innerHTML = 'Registrar Despesa';
             document.getElementById('btn-cancelar-edicao').classList.add('hidden');
         };
 
         window.excluirDespesa = async function(id) {
-            if(confirm("Deseja realmente excluir esta conta?")) {
+            if(confirm("Deseja excluir esta conta?")) {
                 await deleteDoc(doc(db, "despesas", id));
                 window.cancelarEdicao();
                 atualizarDashboard();
             }
         };
 
-        window.abrirModalPagamento = function(id) {
-            idParaPagar = id;
-            document.getElementById('modal-pagamento').classList.remove('hidden');
-        };
-
-        window.fecharModalPagamento = function() {
-            idParaPagar = null;
-            document.getElementById('modal-pagamento').classList.add('hidden');
-        };
+        window.abrirModalPagamento = function(id) { idParaPagar = id; document.getElementById('modal-pagamento').classList.remove('hidden'); };
+        window.fecharModalPagamento = function() { idParaPagar = null; document.getElementById('modal-pagamento').classList.add('hidden'); };
 
         window.executarPagamento = async function() {
             if (!idParaPagar) return;
@@ -1043,13 +935,9 @@
             const mesAnoAtual = obterMesAnoAtual();
             const dataCompleta = new Date().toLocaleDateString('pt-BR');
 
-            // Salva no histórico do Firestore com proteção real via ID
             await addDoc(collection(db, "historico"), {
-                donoId: usuarioLogado.uid,
-                descricao: conta.descricao,
-                valor: conta.valor,
-                mesAno: mesAnoAtual,
-                dataCompleta: dataCompleta
+                donoId: usuarioLogado.uid, descricao: conta.descricao,
+                valor: conta.valor, mesAno: mesAnoAtual, dataCompleta: dataCompleta
             });
 
             await updateDoc(despesaRef, { pagoMes: mesAnoAtual });
@@ -1058,35 +946,22 @@
 
         window.toggleHistorico = function() {
             historicoAberto = !historicoAberto;
-            const container = document.getElementById('container-historico');
-            const textoBtn = document.getElementById('texto-botao-historico');
-
             if (historicoAberto) {
-                container.classList.remove('hidden');
-                textoBtn.innerText = 'Ocultar Histórico';
+                document.getElementById('container-historico').classList.remove('hidden');
+                document.getElementById('texto-botao-historico').innerText = 'Ocultar Histórico';
             } else {
-                container.classList.add('hidden');
-                textoBtn.innerText = 'Ver Histórico de Contas Pagas';
+                document.getElementById('container-historico').classList.add('hidden');
+                document.getElementById('texto-botao-historico').innerText = 'Ver Histórico de Pagamentos';
             }
         };
 
-        function abrirTutorial() {
-            passoTutorialAtual = 0;
-            atualizarVisualTutorial();
-            document.getElementById('modal-tutorial').classList.remove('hidden');
-        }
-
-        window.fecharTutorial = function() {
-            document.getElementById('modal-tutorial').classList.add('hidden');
-        };
+        function abrirTutorial() { passoTutorialAtual = 0; atualizarVisualTutorial(); document.getElementById('modal-tutorial').classList.remove('hidden'); }
+        window.fecharTutorial = function() { document.getElementById('modal-tutorial').classList.add('hidden'); };
 
         window.proximoPassoTutorial = function() {
             passoTutorialAtual++;
-            if (passoTutorialAtual < passosTutorial.length) {
-                atualizarVisualTutorial();
-            } else {
-                window.fecharTutorial();
-            }
+            if (passoTutorialAtual < passosTutorial.length) atualizarVisualTutorial();
+            else window.fecharTutorial();
         };
 
         function atualizarVisualTutorial() {
@@ -1094,142 +969,114 @@
             document.getElementById('tutorial-icon').innerHTML = `<i class="${passo.icone}"></i>`;
             document.getElementById('tutorial-titulo').innerText = passo.titulo;
             document.getElementById('tutorial-texto').innerText = passo.texto;
-
-            const btnProximo = document.getElementById('btn-tutorial-proximo');
-            btnProximo.innerText = passoTutorialAtual === passosTutorial.length - 1 ? 'Começar' : 'Próximo';
-
-            const dots = document.querySelectorAll('#tutorial-dots .dot');
-            dots.forEach((dot, index) => {
-                dot.style.background = index === passoTutorialAtual ? '#2563eb' : '#cbd5e1';
+            document.getElementById('btn-tutorial-proximo').innerText = passoTutorialAtual === passosTutorial.length - 1 ? 'Começar' : 'Próximo';
+            document.querySelectorAll('#tutorial-dots .dot').forEach((dot, idx) => {
+                dot.style.background = idx === passoTutorialAtual ? '#2563eb' : '#cbd5e1';
             });
         }
 
         async function atualizarDashboard() {
             if (!usuarioLogado) return;
-            const isMeuPainel = (usuarioVisualizado === usuarioLogado.email);
+            const isMeuPainel = true;
 
-            document.getElementById('area-salario').style.display = isMeuPainel ? 'block' : 'none';
-            document.getElementById('area-nova-conta').style.display = isMeuPainel ? 'block' : 'none';
-            document.getElementById('titulo-lista').innerText = isMeuPainel ? 'Contas do Mês' : `Contas de ${usuarioVisualizado.split('@')[0]}`;
-
-            // Puxa salário atualizado do banco
             const userSnap = await getDoc(doc(db, "usuarios", usuarioLogado.uid));
             const userView = userSnap.exists() ? userSnap.data() : { salario: 0 };
             const mesAnoAtual = obterMesAnoAtual();
             
-            let totalContas = 0;
-            let fixas = 0, parceladas = 0, unicas = 0;
+            let totalContas = 0, fixas = 0, parceladas = 0, unicas = 0;
             const listaHtml = document.getElementById('lista-contas');
             listaHtml.innerHTML = '';
 
-            // Puxa despesas seguras do Firestore (apenas as do dono)
             const qDespesas = query(collection(db, "despesas"), where("donoId", "==", usuarioLogado.uid));
             const despesasSnap = await getDocs(qDespesas);
-            let despesasDoUsuario = [];
-            despesasSnap.forEach((dDoc) => {
-                despesasDoUsuario.push({ id: dDoc.id, ...dDoc.data() });
-            });
+            let despesas = [];
+            despesasSnap.forEach(d => despesas.push({ id: d.id, ...d.data() }));
 
-            if(despesasDoUsuario.length === 0) {
-                listaHtml.innerHTML = '<li class="expense-item"><div class="info"><small>Nenhuma conta registrada.</small></div></li>';
+            if(despesas.length === 0) {
+                listaHtml.innerHTML = '<li class="expense-item"><div style="text-align:center; color:#64748b; padding:10px;">Nenhuma conta no mês.</div></li>';
             }
 
-            despesasDoUsuario.forEach(conta => {
-                const estaPagoEsteMes = (conta.pagoMes === mesAnoAtual);
-
+            despesas.forEach(conta => {
+                const estaPago = (conta.pagoMes === mesAnoAtual);
                 totalContas += conta.valor;
                 if(conta.tipo === 'Fixa') fixas += conta.valor;
                 else if(conta.tipo === 'Parcelada') parceladas += conta.valor;
                 else unicas += conta.valor;
 
-                let textoDetalhe = conta.detalhe;
+                let detalhe = conta.detalhe;
                 if (conta.tipo === 'Parcelada') {
-                    const parcelasRestantes = conta.totalParcelas - conta.parcelaAtual;
-                    textoDetalhe = `Parcela ${conta.parcelaAtual}/${conta.totalParcelas}`;
-                    if (estaPagoEsteMes && parcelasRestantes > 0) {
-                        textoDetalhe += ` (Restam ${parcelasRestantes} ${parcelasRestantes === 1 ? 'parcela' : 'parcelas'})`;
-                    }
+                    const restam = conta.totalParcelas - conta.parcelaAtual;
+                    detalhe = `Parc. ${conta.parcelaAtual}/${conta.totalParcelas}`;
+                    if (estaPago && restam > 0) detalhe += ` (+${restam})`;
                 }
 
-                let classeCard = estaPagoEsteMes ? 'expense-item pago' : 'expense-item';
-                let conteudoDireito = estaPagoEsteMes ? `
-                    <div class="expense-right">
-                        <div class="expense-value">R$ ${conta.valor.toFixed(2)}</div>
-                        <small style="background: #dcfce7; color: #16a34a; padding: 6px 10px; border-radius: 8px; font-weight: 700;">
-                            <i class="fa-solid fa-check-circle"></i> Conta Paga
-                        </small>
-                    </div>
+                let classeCard = estaPago ? 'expense-item pago' : 'expense-item';
+                
+                // NOVO LAYOUT DO CARTÃO APLICADO AQUI NO JAVASCRIPT
+                let conteudoAcoes = estaPago ? `
+                    <div class="badge-pago"><i class="fa-solid fa-check-circle"></i> Paga</div>
                 ` : `
-                    <div class="expense-right">
-                        <div class="expense-value">R$ ${conta.valor.toFixed(2)}</div>
-                        ${isMeuPainel ? `
-                        <div class="actions-group">
-                            <button class="btn-action pay" title="Marcar como Paga" onclick="abrirModalPagamento('${conta.id}')"><i class="fa-solid fa-check"></i></button>
-                            <button class="btn-action edit" title="Editar" onclick="prepararEdicao('${conta.id}')"><i class="fa-solid fa-pen"></i></button>
-                            <button class="btn-action delete" title="Excluir" onclick="excluirDespesa('${conta.id}')"><i class="fa-solid fa-trash-can"></i></button>
-                        </div>` : ''}
+                    <div class="actions-group">
+                        <button class="btn-action pay" title="Pagar" onclick="abrirModalPagamento('${conta.id}')"><i class="fa-solid fa-check"></i></button>
+                        <button class="btn-action edit" title="Editar" onclick="prepararEdicao('${conta.id}')"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn-action delete" title="Excluir" onclick="excluirDespesa('${conta.id}')"><i class="fa-solid fa-trash-can"></i></button>
                     </div>
                 `;
 
                 listaHtml.innerHTML += `
                     <li class="${classeCard}">
-                        <div class="info">
+                        <div class="expense-header">
                             <strong>${conta.descricao}</strong>
-                            <small>${textoDetalhe}</small>
+                            <div class="expense-value">R$ ${conta.valor.toFixed(2)}</div>
                         </div>
-                        ${conteudoDireito}
+                        <div class="expense-footer">
+                            <span class="expense-tag">${detalhe}</span>
+                            ${conteudoAcoes}
+                        </div>
                     </li>
                 `;
             });
 
-            // Histórico do Firestore seguro (apenas as do dono)
+            // HISTÓRICO
             const historicoHtml = document.getElementById('lista-historico');
             historicoHtml.innerHTML = '';
-            
             const qHist = query(collection(db, "historico"), where("donoId", "==", usuarioLogado.uid));
             const histSnap = await getDocs(qHist);
             let meuHistorico = [];
-            histSnap.forEach((hDoc) => {
-                meuHistorico.push(hDoc.data());
-            });
+            histSnap.forEach(h => meuHistorico.push(h.data()));
 
             if(meuHistorico.length === 0) {
-                historicoHtml.innerHTML = '<p style="color: #64748b; font-size: 0.85rem; text-align: center; padding: 10px;">Nenhum histórico registrado.</p>';
+                historicoHtml.innerHTML = '<p style="color: var(--text-muted); text-align: center;">Nenhum pagamento registrado.</p>';
             } else {
                 const mesesUnicos = [...new Set(meuHistorico.map(h => h.mesAno))];
                 mesesUnicos.forEach(mes => {
-                    historicoHtml.innerHTML += `<div style="font-size: 0.8rem; font-weight: 700; color: #2563eb; margin: 8px 0 4px 0; text-transform: uppercase;">${mes}</div>`;
-                    
-                    const itensDoMes = meuHistorico.filter(h => h.mesAno === mes);
-                    itensDoMes.forEach(h => {
+                    historicoHtml.innerHTML += `<div style="font-size: 0.8rem; font-weight: 800; color: var(--text-muted); margin: 12px 0 8px 0; text-transform: uppercase;">${mes}</div>`;
+                    meuHistorico.filter(h => h.mesAno === mes).forEach(h => {
                         historicoHtml.innerHTML += `
                             <div class="history-item">
                                 <div>
-                                    <strong>${h.descricao}</strong>
-                                    <small style="color: #64748b;">Pago em: ${h.dataCompleta}</small>
+                                    <strong style="display:block; color:var(--text-main); margin-bottom:2px;">${h.descricao}</strong>
+                                    <small style="color: var(--text-muted);">Pago em: ${h.dataCompleta}</small>
                                 </div>
-                                <div style="font-weight: 800; color: #16a34a;">R$ ${h.valor.toFixed(2)}</div>
+                                <div style="font-weight: 800; color: var(--success);">R$ ${h.valor.toFixed(2)}</div>
                             </div>
                         `;
                     });
                 });
             }
 
+            // ATUALIZA VALORES DO DASHBOARD
             const saldo = userView.salario - totalContas;
-
             document.getElementById('display-renda').innerText = `R$ ${userView.salario.toFixed(2)}`;
             document.getElementById('display-despesas').innerText = `R$ ${totalContas.toFixed(2)}`;
             document.getElementById('display-saldo').innerText = `R$ ${saldo.toFixed(2)}`;
 
             const cardSaldo = document.getElementById('card-saldo');
-            if(saldo < 0) {
-                cardSaldo.classList.add('negative');
-            } else {
-                cardSaldo.classList.remove('negative');
-            }
+            if(saldo < 0) cardSaldo.classList.add('negative');
+            else cardSaldo.classList.remove('negative');
 
+            // GRÁFICO
             if (graficoChartJs) graficoChartJs.destroy();
-            
             if (fixas > 0 || parceladas > 0 || unicas > 0) {
                 const ctx = document.getElementById('meuGrafico').getContext('2d');
                 graficoChartJs = new Chart(ctx, {
@@ -1239,15 +1086,12 @@
                         datasets: [{
                             data: [fixas, parceladas, unicas],
                             backgroundColor: ['#2563eb', '#f59e0b', '#7c3aed'],
-                            borderWidth: 0,
-                            hoverOffset: 4
+                            borderWidth: 0, hoverOffset: 4
                         }]
                     },
                     options: {
                         cutout: '75%',
-                        plugins: {
-                            legend: { position: 'bottom', labels: { color: '#334155', font: { size: 11 } } }
-                        }
+                        plugins: { legend: { position: 'bottom', labels: { color: '#64748b', font: { size: 12, weight: 'bold' } } } }
                     }
                 });
             }
