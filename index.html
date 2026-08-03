@@ -482,7 +482,6 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, setDoc, getDoc, query, where, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
-        // Importando configuração de persistência de login
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -547,7 +546,6 @@
             if(!email || !senha) return alert("Preencha email e senha!");
 
             try {
-                // FORÇANDO SALVAR O LOGIN
                 await setPersistence(auth, browserLocalPersistence);
 
                 if(window.currentAuthMode === 'register') {
@@ -701,20 +699,18 @@
             const valor = parseFloat(document.getElementById('valor-produto').value);
             if(!desc || isNaN(valor) || valor <= 0) return alert("Preencha o nome do produto e o valor!");
 
-            const produtoId = Date.now().toString(); // ID único rápido
+            const produtoId = Date.now().toString();
             const novoProduto = { id: produtoId, desc: desc, valor: valor };
             
-            // Usamos arrayUnion para adicionar na lista salva dentro do perfil do usuario (sem quebrar a regra de seguranca)
             await setDoc(doc(db, "usuarios", usuarioLogado.uid), { carrinhoMercado: arrayUnion(novoProduto) }, { merge: true });
 
             document.getElementById('desc-produto').value = '';
             document.getElementById('valor-produto').value = '';
-            document.getElementById('desc-produto').focus(); // Mantem focado para digitar rapido no mercado
+            document.getElementById('desc-produto').focus();
             atualizarDashboard();
         };
 
         window.removerProdutoMercado = async function(id, desc, valor) {
-            // Remontamos o objeto para o Firebase encontrar e remover da lista certinho
             const produtoParaRemover = { id: id, desc: desc, valor: valor };
             await setDoc(doc(db, "usuarios", usuarioLogado.uid), { carrinhoMercado: arrayRemove(produtoParaRemover) }, { merge: true });
             atualizarDashboard();
@@ -727,12 +723,10 @@
             }
         };
 
-
         // ====== ATUALIZA TUDO NA TELA ======
         async function atualizarDashboard() {
             if (!usuarioLogado) return;
 
-            // Busca os dados mestre do Usuario (Salario e Mercado)
             const userSnap = await getDoc(doc(db, "usuarios", usuarioLogado.uid));
             const userView = userSnap.exists() ? userSnap.data() : { salario: 0, orcamentoMercado: 0, carrinhoMercado: [] };
             
@@ -768,7 +762,6 @@
             document.getElementById('display-mercado-gasto').innerText = `Gasto: R$ ${totalGastoMercado.toFixed(2)}`;
             document.getElementById('display-mercado-restante').innerText = `R$ ${restanteMercado.toFixed(2)}`;
 
-            // Lógica de Cores da Barra de Progresso
             const progressBar = document.getElementById('mercado-progress');
             const cardMercado = document.getElementById('card-mercado-resumo');
             const avisoTexto = document.getElementById('texto-aviso-mercado');
@@ -778,26 +771,22 @@
             progressBar.style.width = `${porcentagem}%`;
 
             if (totalGastoMercado >= orcamento && orcamento > 0) {
-                // Passou do limite
-                progressBar.style.background = '#ef4444'; // Vermelho
+                progressBar.style.background = '#ef4444';
                 avisoTexto.innerText = "LIMITE ATINGIDO!";
                 avisoTexto.style.color = '#fca5a5';
                 cardMercado.style.background = 'linear-gradient(135deg, #7f1d1d, #ef4444)';
             } else if (porcentagem >= 80) {
-                // Chegando perto (80% ou mais)
-                progressBar.style.background = '#f59e0b'; // Amarelo
+                progressBar.style.background = '#f59e0b';
                 avisoTexto.innerText = "Perto do limite!";
                 avisoTexto.style.color = '#fde047';
                 cardMercado.style.background = 'linear-gradient(135deg, #1e3a8a, #3b82f6)';
             } else {
-                // Tranquilo
-                progressBar.style.background = '#10b981'; // Verde
+                progressBar.style.background = '#10b981';
                 avisoTexto.innerText = "";
                 cardMercado.style.background = 'linear-gradient(135deg, #1e3a8a, #3b82f6)';
             }
-            // --- FIM ATUALIZAÇÕES MERCADO ---
 
-            // --- ATUALIZAÇÕES DO FINANCEIRO (MANTIDAS INTACTAS) ---
+            // --- ATUALIZAÇÕES DO FINANCEIRO ---
             const mesAnoAtual = obterMesAnoAtual();
             let totalContas = 0, fixas = 0, parceladas = 0, unicas = 0;
             const listaHtml = document.getElementById('lista-contas');
