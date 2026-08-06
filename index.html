@@ -8,7 +8,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>GP Tech Finance</title>
+    <!-- Bibliotecas de Gráfico e OCR (Leitura de Imagem) -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -80,7 +82,6 @@
         .expense-value { font-size: 1.2rem; font-weight: 800; color: var(--danger); white-space: nowrap; }
         .expense-item.pago .expense-value { color: var(--success); }
         
-        /* Modificado para suportar o novo botão de Adicionar como paga sem quebrar a tela */
         .expense-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed var(--border-color); padding-top: 12px; flex-wrap: wrap; gap: 10px; }
         
         .expense-tag { background: var(--bg-body); color: var(--text-muted); padding: 6px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; }
@@ -94,8 +95,6 @@
         .btn-action.edit:hover { background: var(--warning); color: white; }
         .btn-action.delete { background: var(--danger-bg); color: var(--danger); }
         .btn-action.delete:hover { background: var(--danger); color: white; }
-
-        /* Nova classe para o botão escrito Adicionar como paga */
         .btn-action.pay-text { width: auto; padding: 0 12px; font-weight: 700; font-size: 0.85rem; gap: 6px; }
 
         .badge-pago { display: flex; align-items: center; gap: 6px; font-size: 0.9rem; color: var(--success); font-weight: 700; }
@@ -129,8 +128,6 @@
 <body>
 
     <!-- ================= MODAIS PROFISSIONAIS (AVISOS E CONFIRMAÇÕES) ================= -->
-    
-    <!-- Modal de Alerta Genérico -->
     <div id="modal-alerta" class="modal-overlay hidden">
         <div class="modal-card">
             <div class="modal-icon" style="background: #eff6ff; color: #2563eb;" id="icone-alerta">
@@ -144,7 +141,6 @@
         </div>
     </div>
 
-    <!-- Modal de Confirmação Genérico (Excluir, Esvaziar) -->
     <div id="modal-confirm" class="modal-overlay hidden">
         <div class="modal-card">
             <div class="modal-icon" style="background: var(--danger-bg); color: var(--danger);">
@@ -159,7 +155,6 @@
         </div>
     </div>
 
-    <!-- Modal Pagamento Específico -->
     <div id="modal-pagamento" class="modal-overlay hidden">
         <div class="modal-card">
             <div class="modal-icon" style="background: var(--success-bg); color: var(--success);">
@@ -174,7 +169,6 @@
         </div>
     </div>
 
-    <!-- Modal Tutorial Mercado -->
     <div id="modal-tutorial-mercado" class="modal-overlay hidden">
         <div class="modal-card">
             <div class="modal-icon" style="background: var(--warning-bg); color: var(--warning);">
@@ -187,9 +181,6 @@
             </div>
         </div>
     </div>
-
-    <!-- ================= FIM DOS MODAIS ================= -->
-
 
     <!-- TELA DE LOGIN -->
     <div id="auth-screen" class="app-card">
@@ -373,13 +364,33 @@
                     </div>
                 </div>
                 <div class="input-group">
-                    <label>Valor (R$)</label>
+                    <label>Quantidade</label>
                     <div class="input-wrapper">
-                        <i class="fa-solid fa-tag"></i>
-                        <input type="number" id="valor-produto" placeholder="0,00">
+                        <i class="fa-solid fa-cubes"></i>
+                        <input type="number" id="qtd-produto" placeholder="1" value="1" min="1">
                     </div>
                 </div>
             </div>
+            <div class="input-group">
+                <label>Valor Unitário (R$)</label>
+                <div style="display: flex; gap: 10px;">
+                    <div class="input-wrapper" style="flex: 1;">
+                        <i class="fa-solid fa-tag"></i>
+                        <input type="number" id="valor-produto" placeholder="0,00" style="margin-bottom: 0;">
+                    </div>
+                    <!-- Botão de Câmera/Foto -->
+                    <button class="btn-primary" style="margin-top: 0; width: auto; padding: 0 16px; background: var(--primary);" onclick="document.getElementById('camera-input').click()" title="Ler preço da foto">
+                        <i class="fa-solid fa-camera"></i> Foto
+                    </button>
+                    <!-- Input oculto para câmera -->
+                    <input type="file" id="camera-input" accept="image/*" capture="environment" style="display: none;" onchange="processarFotoPreco(event)">
+                </div>
+                <!-- Div de Carregamento OCR -->
+                <div id="ocr-status" style="font-size: 0.85rem; color: var(--primary); margin-top: 8px; display: none; font-weight: 700;">
+                    <i class="fa-solid fa-spinner fa-spin"></i> Analisando valor na foto...
+                </div>
+            </div>
+            
             <button class="btn-primary" onclick="adicionarProdutoMercado()">
                 <i class="fa-solid fa-plus"></i> Colocar no Carrinho
             </button>
@@ -430,7 +441,7 @@
             document.getElementById('texto-alerta-mensagem').innerText = mensagem;
             
             const icone = document.getElementById('icone-alerta');
-            if (titulo === "Sucesso" || titulo === "Conta Criada") {
+            if (titulo === "Sucesso" || titulo === "Conta Criada" || titulo === "Valor Identificado") {
                 icone.style.background = 'var(--success-bg)';
                 icone.style.color = 'var(--success)';
                 icone.innerHTML = '<i class="fa-solid fa-check"></i>';
@@ -645,7 +656,8 @@
             else { document.getElementById('container-historico').classList.add('hidden'); document.getElementById('texto-botao-historico').innerText = 'Ver Histórico de Pagamentos'; }
         };
 
-        // ====== FUNÇÕES DO MERCADO ======
+        // ====== FUNÇÕES DO MERCADO (COM QUANTIDADE E OCR) ======
+        
         window.salvarOrcamentoMercado = async function() {
             const valor = parseFloat(document.getElementById('input-orcamento-mercado').value);
             if(isNaN(valor) || valor < 0) return window.mostrarAlerta("Digite um valor numérico válido para o orçamento do mercado.", "Orçamento Inválido");
@@ -654,25 +666,81 @@
             atualizarDashboard();
         };
 
+        // Função do OCR: Processar foto e ler o preço
+        window.processarFotoPreco = async function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const statusDiv = document.getElementById('ocr-status');
+            statusDiv.style.display = 'block';
+            
+            try {
+                // Utiliza Tesseract para ler a imagem em português
+                const result = await Tesseract.recognize(file, 'por');
+                const text = result.data.text;
+                
+                // Expressão para procurar formatos de moeda como R$ 15,90 ou 15.90 ou 15,90
+                const regex = /(?:R\$?\s*)?(\d{1,4}[.,]\d{2})/g;
+                const matches = [...text.matchAll(regex)];
+                
+                if (matches && matches.length > 0) {
+                    // Substitui a vírgula por ponto no valor lido para o input de número entender
+                    let valorStr = matches[0][1].replace(',', '.');
+                    document.getElementById('valor-produto').value = parseFloat(valorStr).toFixed(2);
+                    window.mostrarAlerta("Preço identificado na foto: R$ " + parseFloat(valorStr).toFixed(2), "Valor Identificado");
+                } else {
+                    window.mostrarAlerta("Não foi possível identificar o valor da etiqueta na foto. Por favor, digite manualmente.", "Aviso");
+                }
+            } catch (error) {
+                console.error(error);
+                window.mostrarAlerta("Erro ao processar a foto. Tente novamente ou digite o valor.", "Erro");
+            } finally {
+                statusDiv.style.display = 'none';
+                event.target.value = ''; // Limpa o input para poder tirar outra foto
+            }
+        };
+
         window.adicionarProdutoMercado = async function() {
             const desc = document.getElementById('desc-produto').value.trim();
             const valor = parseFloat(document.getElementById('valor-produto').value);
-            if(!desc || isNaN(valor) || valor <= 0) return window.mostrarAlerta("Escreva o nome do produto e coloque o preço.", "Item Incompleto");
+            let qtd = parseInt(document.getElementById('qtd-produto').value);
+            
+            if (isNaN(qtd) || qtd < 1) qtd = 1;
+
+            if(!desc || isNaN(valor) || valor <= 0) return window.mostrarAlerta("Escreva o nome do produto e coloque o preço unitário.", "Item Incompleto");
 
             const produtoId = Date.now().toString();
-            const novoProduto = { id: produtoId, desc: desc, valor: valor };
+            const valorTotalItem = valor * qtd; // Calcula total automático da quantidade x valor unitário
+            
+            const novoProduto = { 
+                id: produtoId, 
+                desc: desc, 
+                valor: valor, 
+                quantidade: qtd, 
+                totalItem: valorTotalItem 
+            };
             
             await setDoc(doc(db, "usuarios", usuarioLogado.uid), { carrinhoMercado: arrayUnion(novoProduto) }, { merge: true });
 
-            document.getElementById('desc-produto').value = ''; document.getElementById('valor-produto').value = '';
+            document.getElementById('desc-produto').value = ''; 
+            document.getElementById('valor-produto').value = '';
+            document.getElementById('qtd-produto').value = '1'; // Reseta para 1
             document.getElementById('desc-produto').focus();
             atualizarDashboard();
         };
 
-        window.removerProdutoMercado = async function(id, desc, valor) {
-            const produtoParaRemover = { id: id, desc: desc, valor: valor };
-            await setDoc(doc(db, "usuarios", usuarioLogado.uid), { carrinhoMercado: arrayRemove(produtoParaRemover) }, { merge: true });
-            atualizarDashboard();
+        // Função modificada para remover com segurança usando busca no banco
+        window.removerProdutoMercado = async function(id) {
+            const userSnap = await getDoc(doc(db, "usuarios", usuarioLogado.uid));
+            if(userSnap.exists()) {
+                const carrinho = userSnap.data().carrinhoMercado || [];
+                // Acha o objeto exato salvo no firebase
+                const produtoParaRemover = carrinho.find(p => p.id === id);
+                if(produtoParaRemover) {
+                    await setDoc(doc(db, "usuarios", usuarioLogado.uid), { carrinhoMercado: arrayRemove(produtoParaRemover) }, { merge: true });
+                    atualizarDashboard();
+                }
+            }
         };
 
         window.esvaziarCarrinho = function() {
@@ -700,8 +768,25 @@
                 listaProdutos.innerHTML = '<li class="expense-item"><div style="text-align:center; color:var(--text-muted); padding:10px;">O carrinho está vazio.</div></li>';
             } else {
                 carrinho.forEach(prod => {
-                    totalGastoMercado += prod.valor;
-                    listaProdutos.innerHTML += `<li class="expense-item" style="padding: 14px 18px; flex-direction: row; justify-content: space-between; align-items: center;"><div style="display: flex; flex-direction: column; gap: 4px;"><strong style="color: var(--text-main); font-size: 0.95rem;">${prod.desc}</strong><span style="color: var(--danger); font-weight: 800; font-size: 0.9rem;">R$ ${prod.valor.toFixed(2)}</span></div><button class="btn-action delete" style="width: 34px; height: 34px;" title="Remover" onclick="removerProdutoMercado('${prod.id}', '${prod.desc}', ${prod.valor})"><i class="fa-solid fa-trash-can"></i></button></li>`;
+                    // Preparação de retrocompatibilidade para quem já tem produto sem a variável 'quantidade'
+                    let qtd = prod.quantidade || 1;
+                    let valTotal = prod.totalItem || prod.valor;
+                    totalGastoMercado += valTotal;
+                    
+                    // Mostra X vezes o valor unitário abaixo do nome
+                    let textoQtd = qtd > 1 ? `<span style="font-size: 0.8rem; color: var(--text-muted);">${qtd}x R$ ${prod.valor.toFixed(2)}</span>` : '';
+                    
+                    listaProdutos.innerHTML += `
+                    <li class="expense-item" style="padding: 14px 18px; flex-direction: row; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                            <strong style="color: var(--text-main); font-size: 0.95rem;">${prod.desc}</strong>
+                            ${textoQtd}
+                            <span style="color: var(--danger); font-weight: 800; font-size: 0.9rem;">R$ ${valTotal.toFixed(2)}</span>
+                        </div>
+                        <button class="btn-action delete" style="width: 34px; height: 34px;" title="Remover" onclick="removerProdutoMercado('${prod.id}')">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </li>`;
                 });
             }
 
@@ -747,7 +832,6 @@
                 if (conta.tipo === 'Parcelada') { const restam = conta.totalParcelas - conta.parcelaAtual; detalhe = `Parc. ${conta.parcelaAtual}/${conta.totalParcelas}`; if (estaPago && restam > 0) detalhe += ` (+${restam})`; }
                 let classeCard = estaPago ? 'expense-item pago' : 'expense-item';
                 
-                // ---- BOTÃO COM TEXTO ATUALIZADO AQUI ----
                 let conteudoAcoes = estaPago 
                     ? `<div class="badge-pago"><i class="fa-solid fa-check-circle"></i> Paga</div>` 
                     : `<div class="actions-group">
