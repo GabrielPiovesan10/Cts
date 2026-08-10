@@ -545,7 +545,7 @@
 
                 if(window.currentAuthMode === 'register') {
                     const mensagemPix = `
-                        Para acessar o aplicativo, é necessário assinar a mensalidade de <strong>R$ 80,00</strong>.<br><br>
+                        Para acessar o aplicativo, é necessário assinar a mensalidade de <strong>R$ 70,00</strong>.<br><br>
                         Faça o Pix para a chave celular (WhatsApp):
                         <div style="display: flex; align-items: center; justify-content: space-between; margin: 15px 0; background: var(--bg-body); padding: 12px 15px; border-radius: 12px; border: 1px dashed var(--primary);">
                             <strong style="font-size: 1.2rem; color: var(--primary); letter-spacing: 1px;">19 99340-5480</strong>
@@ -636,7 +636,7 @@
                     tipo: tipo, 
                     parcelaAtual: 1, 
                     totalParcelas: totalParcelas, 
-                    pago: false, // Controle direto de status
+                    pagoMes: null, 
                     detalhe: detalhe 
                 });
             } else {
@@ -685,7 +685,7 @@
         window.abrirModalPagamento = function(id) { idParaPagar = id; document.getElementById('modal-pagamento').classList.remove('hidden'); };
         window.fecharModalPagamento = function() { idParaPagar = null; document.getElementById('modal-pagamento').classList.add('hidden'); };
 
-        // ====== LÓGICA DE PAGAMENTO INTELIGENTE (AVANÇA PARCELAS E ATUALIZA HORA) ======
+        // ====== AQUI ESTÁ A LÓGICA CORRIGIDA PARA "SUMIR" AS CONTAS PAGAS ======
         window.executarPagamento = async function() {
             if (!idParaPagar) return;
             const id = idParaPagar; window.fecharModalPagamento();
@@ -696,26 +696,32 @@
             const mesAnoAtual = obterMesAnoAtual();
             const dataCompleta = new Date().toLocaleDateString('pt-BR');
 
-            // Salva no histórico
+            // Salva no histórico para registro
             await addDoc(collection(db, "historico"), { donoId: usuarioLogado.uid, descricao: conta.descricao, valor: conta.valor, mesAno: mesAnoAtual, dataCompleta: dataCompleta });
 
-            // Se for conta parcelada e ainda faltarem parcelas, avança a parcela e desmarca o pago para aparecer no próximo mês/ciclo imediatamente!
-            if (conta.tipo === 'Parcelada' && conta.parcelaAtual < conta.totalParcelas) {
-                const novaParcela = conta.parcelaAtual + 1;
-                const novoDetalhe = `Parc. ${novaParcela}/${conta.totalParcelas}`;
-                await updateDoc(despesaRef, { 
-                    parcelaAtual: novaParcela, 
-                    detalhe: novoDetalhe, 
-                    pago: false 
-                });
-            } else if (conta.tipo === 'Unica') {
-                // Conta única paga pode ser excluída ou marcada como concluída para sumir das pendentes
+            if (conta.tipo === 'Unica') {
+                // Compra única: se pagou, SOME da lista de vez!
                 await deleteDoc(despesaRef);
-            } else {
-                // Conta fixa ou última parcela: apenas marca como paga
-                await updateDoc(despesaRef, { pago: true });
+            } else if (conta.tipo === 'Parcelada') {
+                if (conta.parcelaAtual < conta.totalParcelas) {
+                    // Tem mais parcelas pra frente: avança pra próxima e já mostra como PENDENTE pro próximo mês
+                    const novaParcela = conta.parcelaAtual + 1;
+                    const novoDetalhe = `Parc. ${novaParcela}/${conta.totalParcelas}`;
+                    await updateDoc(despesaRef, { 
+                        parcelaAtual: novaParcela, 
+                        detalhe: novoDetalhe, 
+                        pagoMes: null // zera o status para já cobrar de novo na tela
+                    });
+                } else {
+                    // Era a última parcela de todas: pagou, SOME da lista de vez!
+                    await deleteDoc(despesaRef);
+                }
+            } else if (conta.tipo === 'Fixa') {
+                // Conta fixa (todo mês tem): marca como paga para ficar verdinha neste mês
+                await updateDoc(despesaRef, { pagoMes: mesAnoAtual });
             }
 
+            // Atualiza a tela imediatamente sem precisar de F5
             atualizarDashboard();
         };
 
@@ -907,10 +913,10 @@
             let despesas = [];
             despesasSnap.forEach(d => despesas.push({ id: d.id, ...d.data() }));
 
-            if(despesas.length === 0) { listaHtml.innerHTML = '<li class="expense-item"><div style="text-align:center; color:#64748b; padding:10px;">Nenhuma conta no mês.</div></li>'; }
+            if(despesas.length === 0) { listaHtml.innerHTML = '<li class="expense-item"><div style="text-align:center; color:#64748b; padding:10px;">Nenhuma conta pendente.</div></li>'; }
             
             despesas.forEach(conta => {
-                const estaPago = conta.pago === true;
+                const estaPago = (conta.pagoMes === mesAnoAtual);
                 
                 totalContasGeral += conta.valor;
                 
