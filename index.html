@@ -132,7 +132,6 @@
                 <i class="fa-solid fa-bell"></i>
             </div>
             <h3 id="texto-alerta-titulo">Aviso</h3>
-            <!-- Mudei aqui para innerHTML no JS para aceitar a formatação bonita e o botão -->
             <p id="texto-alerta-mensagem">Mensagem do alerta vai aqui.</p>
             <div class="modal-buttons">
                 <button class="modal-btn confirm" style="background: var(--primary);" onclick="fecharAlerta()">Entendi</button>
@@ -255,8 +254,13 @@
                     <p id="display-renda" style="color: var(--success); font-size: 1.2rem;">R$ 0,00</p>
                 </div>
                 <div class="dash-card">
-                    <h3>Despesas</h3>
+                    <h3>Despesas (Total do Mês)</h3>
                     <p id="display-despesas" style="color: var(--danger); font-size: 1.2rem;">R$ 0,00</p>
+                </div>
+                <!-- NOVO CARD: QUANTO FALTA PARA PAGAR -->
+                <div class="dash-card" style="grid-column: span 2;">
+                    <h3>Falta Pagar (Pendente)</h3>
+                    <p id="display-falta-pagar" style="color: var(--warning); font-size: 1.6rem;">R$ 0,00</p>
                 </div>
             </div>
 
@@ -306,7 +310,7 @@
                 <button class="btn-primary hidden" id="btn-cancelar-edicao" style="background: var(--text-muted); margin-top: 10px;" onclick="cancelarEdicao()">Cancelar Edição</button>
             </div>
 
-            <div class="section-title" id="titulo-lista"><i class="fa-solid fa-list"></i> Contas do Mês</div>
+            <div class="section-title" id="titulo-lista"><i class="fa-solid fa-list"></i> <span id="titulo-mes-atual">Contas do Mês</span></div>
             <ul class="expense-list" id="lista-contas"></ul>
 
             <button class="btn-history-toggle" onclick="toggleHistorico()">
@@ -439,13 +443,10 @@
 
         // ====== FUNÇÃO PARA COPIAR A CHAVE PIX ======
         window.copiarChavePix = function(botao) {
-            // A chave fica limpa sem espaços para não dar erro no app do banco
             navigator.clipboard.writeText("19993405480").then(() => {
                 const textoOriginal = botao.innerHTML;
                 botao.innerHTML = '<i class="fa-solid fa-check"></i> Copiado!';
                 botao.style.background = 'var(--success)';
-                
-                // Volta ao normal após 2 segundos
                 setTimeout(() => {
                     botao.innerHTML = textoOriginal;
                     botao.style.background = 'var(--primary)';
@@ -458,7 +459,6 @@
         // ====== FUNÇÕES DOS MODAIS CUSTOMIZADOS ======
         window.mostrarAlerta = function(mensagem, titulo = "Aviso") {
             document.getElementById('texto-alerta-titulo').innerText = titulo;
-            // AQUI MUDAMOS PARA innerHTML para aceitar o botão HTML e negrito
             document.getElementById('texto-alerta-mensagem').innerHTML = mensagem;
             
             const icone = document.getElementById('icone-alerta');
@@ -545,7 +545,6 @@
                 await setPersistence(auth, browserLocalPersistence);
 
                 if(window.currentAuthMode === 'register') {
-                    // Mensagem com HTML, botão de copiar e visual agradável
                     const mensagemPix = `
                         Para acessar o aplicativo, é necessário assinar a mensalidade de <strong>R$ 80,00</strong>.<br><br>
                         Faça o Pix para a chave celular (WhatsApp):
@@ -699,8 +698,7 @@
             else { document.getElementById('container-historico').classList.add('hidden'); document.getElementById('texto-botao-historico').innerText = 'Ver Histórico de Pagamentos'; }
         };
 
-        // ====== FUNÇÕES DO MERCADO (COM EDIÇÃO DIRETA E EXCLUSÃO INSTANTÂNEA) ======
-        
+        // ====== FUNÇÕES DO MERCADO ======
         window.salvarOrcamentoMercado = async function() {
             const valor = parseFloat(document.getElementById('input-orcamento-mercado').value);
             if(isNaN(valor) || valor < 0) return window.mostrarAlerta("Digite um valor numérico válido para o orçamento do mercado.", "Orçamento Inválido");
@@ -710,7 +708,6 @@
             atualizarDashboard();
         };
 
-        // Função do OCR: Processar foto e ler o preço
         window.processarFotoPreco = async function(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -764,7 +761,6 @@
                 cancelarEdicaoProduto();
             }
 
-            // Salva de forma otimizada no Firestore atualizando o cache local simultaneamente
             await setDoc(doc(db, "usuarios", usuarioLogado.uid), { carrinhoMercado: cacheDadosApp.carrinhoMercado }, { merge: true });
 
             document.getElementById('desc-produto').value = ''; 
@@ -800,7 +796,6 @@
 
         window.removerProdutoMercado = function(id) {
             window.mostrarConfirmacao("Deseja realmente remover este produto do carrinho?", "Remover Produto", async () => {
-                // Atualiza instantaneamente o array local e reflete na tela sem travamento ou necessidade de F5
                 cacheDadosApp.carrinhoMercado = cacheDadosApp.carrinhoMercado.filter(p => p.id !== id);
                 atualizarDashboard();
                 await setDoc(doc(db, "usuarios", usuarioLogado.uid), { carrinhoMercado: cacheDadosApp.carrinhoMercado }, { merge: true });
@@ -815,11 +810,11 @@
             });
         };
 
-        // ====== ATUALIZA TUDO NA TELA COM ALTA PERFORMANCE ======
+        // ====== ATUALIZAÇÃO DO DASHBOARD ======
         async function atualizarDashboard() {
             if (!usuarioLogado) return;
 
-            // --- ATUALIZAÇÕES DO MERCADO (usando cache para evitar lentidão) ---
+            // --- MERCADO ---
             const orcamento = cacheDadosApp.orcamentoMercado || 0;
             const carrinho = cacheDadosApp.carrinhoMercado || [];
             let totalGastoMercado = 0;
@@ -872,9 +867,13 @@
                 progressBar.style.background = '#10b981'; avisoTexto.innerText = ""; cardMercado.style.background = 'linear-gradient(135deg, #1e3a8a, #3b82f6)';
             }
 
-            // --- ATUALIZAÇÕES DO FINANCEIRO ---
+            // --- FINANCEIRO ---
             const mesAnoAtual = obterMesAnoAtual();
-            let totalContas = 0, fixas = 0, parceladas = 0, unicas = 0;
+            
+            // ATUALIZA O TÍTULO DA LISTA COM O MÊS ATUAL
+            document.getElementById('titulo-mes-atual').innerText = `Contas de ${mesAnoAtual}`;
+
+            let totalContasGeral = 0, totalContasPagas = 0, totalFaltaPagar = 0, fixas = 0, parceladas = 0, unicas = 0;
             const listaHtml = document.getElementById('lista-contas');
             listaHtml.innerHTML = '';
 
@@ -887,7 +886,16 @@
             
             despesas.forEach(conta => {
                 const estaPago = (conta.pagoMes === mesAnoAtual);
-                totalContas += conta.valor;
+                
+                totalContasGeral += conta.valor;
+                
+                if(estaPago) {
+                    totalContasPagas += conta.valor;
+                } else {
+                    // Acumula o que ainda falta pagar
+                    totalFaltaPagar += conta.valor;
+                }
+
                 if(conta.tipo === 'Fixa') fixas += conta.valor; else if(conta.tipo === 'Parcelada') parceladas += conta.valor; else unicas += conta.valor;
                 let detalhe = conta.detalhe;
                 if (conta.tipo === 'Parcelada') { const restam = conta.totalParcelas - conta.parcelaAtual; detalhe = `Parc. ${conta.parcelaAtual}/${conta.totalParcelas}`; if (estaPago && restam > 0) detalhe += ` (+${restam})`; }
@@ -915,11 +923,17 @@
             if(meuHistorico.length === 0) { historicoHtml.innerHTML = '<p style="color: var(--text-muted); text-align: center;">Nenhum pagamento registrado.</p>'; } 
             else { const mesesUnicos = [...new Set(meuHistorico.map(h => h.mesAno))]; mesesUnicos.forEach(mes => { historicoHtml.innerHTML += `<div style="font-size: 0.8rem; font-weight: 800; color: var(--text-muted); margin: 12px 0 8px 0; text-transform: uppercase;">${mes}</div>`; meuHistorico.filter(h => h.mesAno === mes).forEach(h => { historicoHtml.innerHTML += `<div class="history-item"><div><strong style="display:block; color:var(--text-main); margin-bottom:2px;">${h.descricao}</strong><small style="color: var(--text-muted);">Pago em: ${h.dataCompleta}</small></div><div style="font-weight: 800; color: var(--success);">R$ ${h.valor.toFixed(2)}</div></div>`; }); }); }
 
-            const saldo = cacheDadosApp.salario - totalContas;
+            const saldo = cacheDadosApp.salario - totalContasPagas;
+            
             document.getElementById('display-renda').innerText = `R$ ${cacheDadosApp.salario.toFixed(2)}`; 
-            document.getElementById('display-despesas').innerText = `R$ ${totalContas.toFixed(2)}`; 
+            document.getElementById('display-despesas').innerText = `R$ ${totalContasGeral.toFixed(2)}`; 
             document.getElementById('display-saldo').innerText = `R$ ${saldo.toFixed(2)}`;
-            const cardSaldo = document.getElementById('card-saldo'); if(saldo < 0) cardSaldo.classList.add('negative'); else cardSaldo.classList.remove('negative');
+            
+            // ATUALIZA O CARD DE "FALTA PAGAR"
+            document.getElementById('display-falta-pagar').innerText = `R$ ${totalFaltaPagar.toFixed(2)}`;
+            
+            const cardSaldo = document.getElementById('card-saldo'); 
+            if(saldo < 0) cardSaldo.classList.add('negative'); else cardSaldo.classList.remove('negative');
 
             if (graficoChartJs) graficoChartJs.destroy();
             if (fixas > 0 || parceladas > 0 || unicas > 0) { const ctx = document.getElementById('meuGrafico').getContext('2d'); graficoChartJs = new Chart(ctx, { type: 'doughnut', data: { labels: ['Fixas', 'Parceladas', 'Únicas'], datasets: [{ data: [fixas, parceladas, unicas], backgroundColor: ['#2563eb', '#f59e0b', '#7c3aed'], borderWidth: 0, hoverOffset: 4 }] }, options: { cutout: '75%', plugins: { legend: { position: 'bottom', labels: { color: '#64748b', font: { size: 12, weight: 'bold' } } } } } }); }
