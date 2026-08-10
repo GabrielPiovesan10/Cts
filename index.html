@@ -125,7 +125,7 @@
 </head>
 <body>
 
-    <!-- ================= MODAIS PROFISSIONAIS (AVISOS E CONFIRMAÇÕES) ================= -->
+    <!-- ================= MODAIS PROFISSIONAIS ================= -->
     <div id="modal-alerta" class="modal-overlay hidden">
         <div class="modal-card">
             <div class="modal-icon" style="background: #eff6ff; color: #2563eb;" id="icone-alerta">
@@ -298,13 +298,24 @@
                         </div>
                     </div>
                 </div>
-                <div class="input-group hidden" id="div-parcelas">
-                    <label>Número de Parcelas</label>
-                    <div class="input-wrapper">
-                        <i class="fa-solid fa-list-ol"></i>
-                        <input type="number" id="qtd-parcelas" placeholder="Ex: 5">
+                <!-- Container de Parcelas -->
+                <div class="form-row hidden" id="div-parcelas-container">
+                    <div class="input-group">
+                        <label>Total de Parcelas</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-list-ol"></i>
+                            <input type="number" id="qtd-parcelas" placeholder="Ex: 5">
+                        </div>
+                    </div>
+                    <div class="input-group hidden" id="div-parcela-atual">
+                        <label>Parcela Atual (Editar)</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-hashtag"></i>
+                            <input type="number" id="parcela-atual" placeholder="Ex: 1">
+                        </div>
                     </div>
                 </div>
+
                 <button class="btn-primary" id="btn-salvar-conta" onclick="salvarDespesa()">Registrar Despesa</button>
                 <button class="btn-primary hidden" id="btn-cancelar-edicao" style="background: var(--text-muted); margin-top: 10px;" onclick="cancelarEdicao()">Cancelar Edição</button>
             </div>
@@ -336,26 +347,21 @@
                 </div>
             </div>
 
-            <!-- CARD INTELIGENTE DE MERCADO -->
             <div class="dash-card balance" id="card-mercado-resumo" style="margin-bottom: 25px;">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <h3>Disponível para Gastar</h3>
                     <h3 id="texto-aviso-mercado" style="color: #fde047; font-weight: 800; letter-spacing: 0;"></h3>
                 </div>
                 <p id="display-mercado-restante">R$ 0,00</p>
-                
-                <!-- BARRA DE PROGRESSO -->
                 <div style="margin-top: 18px; background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; overflow: hidden; width: 100%;">
                     <div id="mercado-progress" style="background: #10b981; height: 100%; width: 0%; transition: 0.4s ease-out;"></div>
                 </div>
-
                 <div style="display: flex; justify-content: space-between; margin-top: 10px; font-size: 0.8rem; font-weight: 600; color: rgba(255,255,255,0.8);">
                     <span id="display-mercado-gasto">Gasto: R$ 0,00</span>
                     <span id="display-mercado-orcamento">Meta: R$ 0,00</span>
                 </div>
             </div>
 
-            <!-- ADICIONAR / EDITAR PRODUTOS -->
             <div class="section-title" id="titulo-form-produto"><i class="fa-solid fa-cart-plus"></i> Adicionar no Carrinho</div>
             <input type="hidden" id="edit-produto-id" value="">
             <div class="form-row">
@@ -381,14 +387,11 @@
                         <i class="fa-solid fa-tag"></i>
                         <input type="number" id="valor-produto" placeholder="0,00" style="margin-bottom: 0;">
                     </div>
-                    <!-- Botão de Câmera/Foto -->
-                    <button class="btn-primary" style="margin-top: 0; width: auto; padding: 0 16px; background: var(--primary);" onclick="document.getElementById('camera-input').click()" title="Ler preço da foto">
+                    <button class="btn-primary" style="margin-top: 0; width: auto; padding: 0 16px;" onclick="document.getElementById('camera-input').click()" title="Ler preço da foto">
                         <i class="fa-solid fa-camera"></i> Foto
                     </button>
-                    <!-- Input oculto para câmera -->
                     <input type="file" id="camera-input" accept="image/*" capture="environment" style="display: none;" onchange="processarFotoPreco(event)">
                 </div>
-                <!-- Div de Carregamento OCR -->
                 <div id="ocr-status" style="font-size: 0.85rem; color: var(--primary); margin-top: 8px; display: none; font-weight: 700;">
                     <i class="fa-solid fa-spinner fa-spin"></i> Analisando valor na foto...
                 </div>
@@ -399,7 +402,6 @@
             </button>
             <button class="btn-primary hidden" id="btn-cancelar-edicao-produto" style="background: var(--text-muted); margin-top: 10px;" onclick="cancelarEdicaoProduto()">Cancelar Edição</button>
 
-            <!-- LISTA DO CARRINHO -->
             <div class="section-title"><i class="fa-solid fa-basket-shopping"></i> Seu Carrinho</div>
             <ul class="expense-list" id="lista-produtos-mercado"></ul>
             
@@ -410,7 +412,6 @@
 
     </div>
 
-    <!-- SCRIPT FIREBASE E LÓGICA -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, setDoc, getDoc, query, where } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
@@ -440,66 +441,38 @@
         const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
         function obterMesAnoAtual() { return `${nomesMeses[new Date().getMonth()]} de ${new Date().getFullYear()}`; }
 
-        // ====== FUNÇÃO PARA COPIAR A CHAVE PIX ======
         window.copiarChavePix = function(botao) {
             navigator.clipboard.writeText("19993405480").then(() => {
                 const textoOriginal = botao.innerHTML;
                 botao.innerHTML = '<i class="fa-solid fa-check"></i> Copiado!';
                 botao.style.background = 'var(--success)';
-                setTimeout(() => {
-                    botao.innerHTML = textoOriginal;
-                    botao.style.background = 'var(--primary)';
-                }, 2000);
-            }).catch(err => {
-                console.error('Erro ao copiar: ', err);
-            });
+                setTimeout(() => { botao.innerHTML = textoOriginal; botao.style.background = 'var(--primary)'; }, 2000);
+            }).catch(err => { console.error('Erro ao copiar: ', err); });
         };
 
-        // ====== FUNÇÕES DOS MODAIS CUSTOMIZADOS ======
         window.mostrarAlerta = function(mensagem, titulo = "Aviso") {
             document.getElementById('texto-alerta-titulo').innerText = titulo;
             document.getElementById('texto-alerta-mensagem').innerHTML = mensagem;
-            
             const icone = document.getElementById('icone-alerta');
             if (titulo === "Sucesso" || titulo === "Conta Criada" || titulo === "Valor Identificado") {
-                icone.style.background = 'var(--success-bg)';
-                icone.style.color = 'var(--success)';
-                icone.innerHTML = '<i class="fa-solid fa-check"></i>';
+                icone.style.background = 'var(--success-bg)'; icone.style.color = 'var(--success)'; icone.innerHTML = '<i class="fa-solid fa-check"></i>';
             } else {
-                icone.style.background = '#eff6ff';
-                icone.style.color = '#2563eb';
-                icone.innerHTML = '<i class="fa-solid fa-bell"></i>';
+                icone.style.background = '#eff6ff'; icone.style.color = '#2563eb'; icone.innerHTML = '<i class="fa-solid fa-bell"></i>';
             }
-
             document.getElementById('modal-alerta').classList.remove('hidden');
         };
 
-        window.fecharAlerta = function() {
-            document.getElementById('modal-alerta').classList.add('hidden');
-        };
-
+        window.fecharAlerta = function() { document.getElementById('modal-alerta').classList.add('hidden'); };
         window.mostrarConfirmacao = function(mensagem, titulo, callbackFuncao) {
             document.getElementById('texto-confirm-titulo').innerText = titulo;
             document.getElementById('texto-confirm-mensagem').innerText = mensagem;
             funcConfirmacaoAtiva = callbackFuncao;
             document.getElementById('modal-confirm').classList.remove('hidden');
         };
+        window.fecharConfirm = function() { funcConfirmacaoAtiva = null; document.getElementById('modal-confirm').classList.add('hidden'); };
+        window.executarConfirm = async function() { if (funcConfirmacaoAtiva) await funcConfirmacaoAtiva(); window.fecharConfirm(); };
+        window.fecharTutorialMercado = function() { document.getElementById('modal-tutorial-mercado').classList.add('hidden'); }
 
-        window.fecharConfirm = function() {
-            funcConfirmacaoAtiva = null;
-            document.getElementById('modal-confirm').classList.add('hidden');
-        };
-
-        window.executarConfirm = async function() {
-            if (funcConfirmacaoAtiva) await funcConfirmacaoAtiva();
-            window.fecharConfirm();
-        };
-
-        window.fecharTutorialMercado = function() {
-            document.getElementById('modal-tutorial-mercado').classList.add('hidden');
-        }
-
-        // ====== ALTERNAR ABAS ======
         window.alternarAbaApp = function(aba) {
             if(aba === 'dashboard') {
                 document.getElementById('btn-tab-dashboard').classList.add('active');
@@ -511,7 +484,6 @@
                 document.getElementById('btn-tab-mercado').classList.add('active');
                 document.getElementById('tab-dashboard').classList.add('hidden');
                 document.getElementById('tab-mercado').classList.remove('hidden');
-                
                 if (usuarioLogado && !localStorage.getItem('tutorialMercado_' + usuarioLogado.uid)) {
                     document.getElementById('modal-tutorial-mercado').classList.remove('hidden');
                     localStorage.setItem('tutorialMercado_' + usuarioLogado.uid, 'true');
@@ -542,8 +514,8 @@
 
             try {
                 await setPersistence(auth, browserLocalPersistence);
-
                 if(window.currentAuthMode === 'register') {
+                    // MENSALIDADE ATUALIZADA PARA 70 REAIS
                     const mensagemPix = `
                         Para acessar o aplicativo, é necessário assinar a mensalidade de <strong>R$ 70,00</strong>.<br><br>
                         Faça o Pix para a chave celular (WhatsApp):
@@ -595,7 +567,6 @@
             }
         }
 
-        // ====== FUNÇÕES FINANCEIRAS ======
         window.salvarSalario = async function() {
             const valor = parseFloat(document.getElementById('input-salario').value);
             if(isNaN(valor) || valor < 0) return window.mostrarAlerta("Digite um valor numérico válido para o salário.", "Valor Inválido");
@@ -607,9 +578,19 @@
 
         window.verificarParcela = function() {
             const tipo = document.getElementById('tipo-conta').value;
-            const divParcelas = document.getElementById('div-parcelas');
-            if(tipo === 'Parcelada') { divParcelas.classList.remove('hidden'); } 
-            else { divParcelas.classList.add('hidden'); document.getElementById('qtd-parcelas').value = ''; }
+            const divContainer = document.getElementById('div-parcelas-container');
+            const divParcelaAtual = document.getElementById('div-parcela-atual');
+            const editId = document.getElementById('edit-id').value;
+
+            if(tipo === 'Parcelada') { 
+                divContainer.classList.remove('hidden'); 
+                if (editId) divParcelaAtual.classList.remove('hidden');
+                else divParcelaAtual.classList.add('hidden');
+            } else { 
+                divContainer.classList.add('hidden'); 
+                document.getElementById('qtd-parcelas').value = ''; 
+                document.getElementById('parcela-atual').value = ''; 
+            }
         };
 
         window.salvarDespesa = async function() {
@@ -621,31 +602,36 @@
             if(!desc || isNaN(valor) || valor <= 0) return window.mostrarAlerta("Preencha a descrição e um valor maior que zero.", "Dados Incompletos");
 
             let totalParcelas = 1;
+            let parcelaAtual = 1;
+
             if(tipo === 'Parcelada') {
                 totalParcelas = parseInt(document.getElementById('qtd-parcelas').value);
-                if(isNaN(totalParcelas) || totalParcelas < 2) return window.mostrarAlerta("Para conta parcelada, digite um número de parcelas válido (maior que 1).", "Parcelas Inválidas");
+                if(isNaN(totalParcelas) || totalParcelas < 2) return window.mostrarAlerta("Para conta parcelada, digite um número de parcelas válido.", "Parcelas Inválidas");
+                
+                if (editId) {
+                    parcelaAtual = parseInt(document.getElementById('parcela-atual').value);
+                    if(isNaN(parcelaAtual) || parcelaAtual < 1) parcelaAtual = 1;
+                }
             }
 
-            let detalhe = tipo === 'Fixa' ? 'Conta Fixa' : (tipo === 'Unica' ? 'Única' : 'Parcela 1/' + totalParcelas);
+            let detalhe = tipo === 'Fixa' ? 'Conta Fixa' : (tipo === 'Unica' ? 'Única' : `Parc. ${parcelaAtual}/${totalParcelas}`);
 
             if (!editId) {
                 await addDoc(collection(db, "despesas"), { 
-                    donoId: usuarioLogado.uid, 
-                    descricao: desc, 
-                    valor: valor, 
-                    tipo: tipo, 
-                    parcelaAtual: 1, 
-                    totalParcelas: totalParcelas, 
-                    pagoMes: null, 
-                    detalhe: detalhe 
+                    donoId: usuarioLogado.uid, descricao: desc, valor: valor, tipo: tipo, 
+                    parcelaAtual: 1, totalParcelas: totalParcelas, pagoMes: null, detalhe: detalhe 
                 });
             } else {
-                await updateDoc(doc(db, "despesas", editId), { descricao: desc, valor: valor, tipo: tipo, totalParcelas: totalParcelas, detalhe: detalhe });
+                await updateDoc(doc(db, "despesas", editId), { 
+                    descricao: desc, valor: valor, tipo: tipo, 
+                    totalParcelas: totalParcelas, parcelaAtual: parcelaAtual, detalhe: detalhe 
+                });
                 window.cancelarEdicao();
             }
 
             document.getElementById('desc-conta').value = ''; document.getElementById('valor-conta').value = '';
-            document.getElementById('qtd-parcelas').value = ''; document.getElementById('tipo-conta').value = 'Unica';
+            document.getElementById('qtd-parcelas').value = ''; document.getElementById('parcela-atual').value = '';
+            document.getElementById('tipo-conta').value = 'Unica';
             window.verificarParcela(); atualizarDashboard();
         };
 
@@ -657,8 +643,13 @@
             document.getElementById('valor-conta').value = conta.valor;
             document.getElementById('tipo-conta').value = conta.tipo;
             document.getElementById('edit-id').value = id;
-            window.verificarParcela();
-            if(conta.tipo === 'Parcelada') document.getElementById('qtd-parcelas').value = conta.totalParcelas;
+            window.verificarParcela(); // Chama a verificação que vai mostrar os campos certos
+            
+            if(conta.tipo === 'Parcelada') {
+                document.getElementById('qtd-parcelas').value = conta.totalParcelas;
+                document.getElementById('parcela-atual').value = conta.parcelaAtual || 1;
+            }
+            
             document.getElementById('titulo-form-conta').innerHTML = '<i class="fa-solid fa-pen"></i> Editar Conta';
             document.getElementById('btn-salvar-conta').innerHTML = 'Salvar Alterações';
             document.getElementById('btn-cancelar-edicao').classList.remove('hidden');
@@ -667,7 +658,8 @@
 
         window.cancelarEdicao = function() {
             document.getElementById('desc-conta').value = ''; document.getElementById('valor-conta').value = '';
-            document.getElementById('qtd-parcelas').value = ''; document.getElementById('tipo-conta').value = 'Unica';
+            document.getElementById('qtd-parcelas').value = ''; document.getElementById('parcela-atual').value = '';
+            document.getElementById('tipo-conta').value = 'Unica';
             document.getElementById('edit-id').value = ''; window.verificarParcela();
             document.getElementById('titulo-form-conta').innerHTML = '<i class="fa-solid fa-plus-circle"></i> Adicionar Conta';
             document.getElementById('btn-salvar-conta').innerHTML = 'Registrar Despesa';
@@ -685,7 +677,28 @@
         window.abrirModalPagamento = function(id) { idParaPagar = id; document.getElementById('modal-pagamento').classList.remove('hidden'); };
         window.fecharModalPagamento = function() { idParaPagar = null; document.getElementById('modal-pagamento').classList.add('hidden'); };
 
-        // ====== AQUI ESTÁ A LÓGICA CORRIGIDA PARA "SUMIR" AS CONTAS PAGAS ======
+        // === BOTÃO DE DESFAZER PAGAMENTO ===
+        window.desfazerPagamento = function(id) {
+            window.mostrarConfirmacao("Deseja desfazer o pagamento desta conta e voltar ela como pendente?", "Desfazer Pagamento", async () => {
+                const despesaRef = doc(db, "despesas", id);
+                const despesaSnap = await getDoc(despesaRef);
+                if(!despesaSnap.exists()) return;
+                const conta = despesaSnap.data();
+
+                let updateData = { pagoMes: null, pago: false };
+
+                // Se for parcelada e ele desfez, volta uma parcela (ex: era 3, volta pra 2)
+                if (conta.tipo === 'Parcelada') {
+                    const voltaParcela = conta.parcelaAtual > 1 ? conta.parcelaAtual - 1 : 1;
+                    updateData.parcelaAtual = voltaParcela;
+                    updateData.detalhe = `Parc. ${voltaParcela}/${conta.totalParcelas}`;
+                }
+
+                await updateDoc(despesaRef, updateData);
+                atualizarDashboard();
+            });
+        };
+
         window.executarPagamento = async function() {
             if (!idParaPagar) return;
             const id = idParaPagar; window.fecharModalPagamento();
@@ -699,29 +712,29 @@
             // Salva no histórico para registro
             await addDoc(collection(db, "historico"), { donoId: usuarioLogado.uid, descricao: conta.descricao, valor: conta.valor, mesAno: mesAnoAtual, dataCompleta: dataCompleta });
 
+            // A LÓGICA CORRETA:
             if (conta.tipo === 'Unica') {
-                // Compra única: se pagou, SOME da lista de vez!
+                // É única? DELETA DA EXISTÊNCIA.
                 await deleteDoc(despesaRef);
             } else if (conta.tipo === 'Parcelada') {
                 if (conta.parcelaAtual < conta.totalParcelas) {
-                    // Tem mais parcelas pra frente: avança pra próxima e já mostra como PENDENTE pro próximo mês
+                    // Tem mais pra frente? Avança a parcela pra próxima e MARCA COMO PAGA neste mês.
                     const novaParcela = conta.parcelaAtual + 1;
-                    const novoDetalhe = `Parc. ${novaParcela}/${conta.totalParcelas}`;
                     await updateDoc(despesaRef, { 
                         parcelaAtual: novaParcela, 
-                        detalhe: novoDetalhe, 
-                        pagoMes: null // zera o status para já cobrar de novo na tela
+                        detalhe: `Parc. ${novaParcela}/${conta.totalParcelas}`, 
+                        pagoMes: mesAnoAtual, 
+                        pago: false // limpa o lixo das versões passadas se tiver
                     });
                 } else {
-                    // Era a última parcela de todas: pagou, SOME da lista de vez!
+                    // Era a última de todas? DELETA DA EXISTÊNCIA.
                     await deleteDoc(despesaRef);
                 }
             } else if (conta.tipo === 'Fixa') {
-                // Conta fixa (todo mês tem): marca como paga para ficar verdinha neste mês
-                await updateDoc(despesaRef, { pagoMes: mesAnoAtual });
+                // Fixa, só marca como paga pro mês atual.
+                await updateDoc(despesaRef, { pagoMes: mesAnoAtual, pago: false });
             }
 
-            // Atualiza a tela imediatamente sem precisar de F5
             atualizarDashboard();
         };
 
@@ -729,6 +742,13 @@
             historicoAberto = !historicoAberto;
             if (historicoAberto) { document.getElementById('container-historico').classList.remove('hidden'); document.getElementById('texto-botao-historico').innerText = 'Ocultar Histórico'; } 
             else { document.getElementById('container-historico').classList.add('hidden'); document.getElementById('texto-botao-historico').innerText = 'Ver Histórico de Pagamentos'; }
+        };
+
+        window.excluirHistorico = function(id) {
+            window.mostrarConfirmacao("Deseja remover este registro do histórico?", "Apagar Histórico", async () => {
+                await deleteDoc(doc(db, "historico", id));
+                atualizarDashboard();
+            });
         };
 
         // ====== FUNÇÕES DO MERCADO ======
@@ -751,7 +771,6 @@
             try {
                 const result = await Tesseract.recognize(file, 'por');
                 const text = result.data.text;
-                
                 const regex = /(?:R\$?\s*)?(\d{1,4}[.,]\d{2})/g;
                 const matches = [...text.matchAll(regex)];
                 
@@ -763,7 +782,6 @@
                     window.mostrarAlerta("Não foi possível identificar o valor da etiqueta na foto. Por favor, digite manualmente.", "Aviso");
                 }
             } catch (error) {
-                console.error(error);
                 window.mostrarAlerta("Erro ao processar a foto. Tente novamente ou digite o valor.", "Erro");
             } finally {
                 statusDiv.style.display = 'none';
@@ -818,10 +836,8 @@
         };
 
         window.cancelarEdicaoProduto = function() {
-            document.getElementById('desc-produto').value = ''; 
-            document.getElementById('valor-produto').value = '';
-            document.getElementById('qtd-produto').value = '1';
-            document.getElementById('edit-produto-id').value = '';
+            document.getElementById('desc-produto').value = ''; document.getElementById('valor-produto').value = '';
+            document.getElementById('qtd-produto').value = '1'; document.getElementById('edit-produto-id').value = '';
             document.getElementById('titulo-form-produto').innerHTML = '<i class="fa-solid fa-cart-plus"></i> Adicionar no Carrinho';
             document.getElementById('btn-salvar-produto').innerHTML = '<i class="fa-solid fa-plus"></i> Colocar no Carrinho';
             document.getElementById('btn-cancelar-edicao-produto').classList.add('hidden');
@@ -861,7 +877,6 @@
                     let qtd = prod.quantidade || 1;
                     let valTotal = prod.totalItem || (prod.valor * qtd);
                     totalGastoMercado += valTotal;
-                    
                     let textoQtd = qtd > 1 ? `<span style="font-size: 0.8rem; color: var(--text-muted);">${qtd}x R$ ${prod.valor.toFixed(2)}</span>` : '';
                     
                     listaProdutos.innerHTML += `
@@ -912,27 +927,50 @@
             const despesasSnap = await getDocs(qDespesas);
             let despesas = [];
             despesasSnap.forEach(d => despesas.push({ id: d.id, ...d.data() }));
-
-            if(despesas.length === 0) { listaHtml.innerHTML = '<li class="expense-item"><div style="text-align:center; color:#64748b; padding:10px;">Nenhuma conta pendente.</div></li>'; }
             
+            // AUTO-LIMPEZA DAS CONTAS ÚNICAS E ÚLTIMAS PARCELAS PAGAS DA VERSÃO ANTIGA
+            for (let i = 0; i < despesas.length; i++) {
+                let conta = despesas[i];
+                const taPagaDB = (conta.pagoMes === mesAnoAtual) || (conta.pago === true);
+                
+                if (taPagaDB) {
+                    if (conta.tipo === 'Unica' || (conta.tipo === 'Parcelada' && conta.parcelaAtual >= conta.totalParcelas)) {
+                        await deleteDoc(doc(db, "despesas", conta.id)); // LIMPA O LIXO
+                        conta.apagada = true; // Flag pra ignorar na renderização abaixo
+                    }
+                }
+            }
+
+            let contasVazias = true;
+
             despesas.forEach(conta => {
-                const estaPago = (conta.pagoMes === mesAnoAtual);
+                if (conta.apagada) return; // Se a auto-limpeza pegou, pula ela
+                contasVazias = false;
+
+                const estaPago = (conta.pagoMes === mesAnoAtual) || (conta.pago === true);
                 
                 totalContasGeral += conta.valor;
-                
-                if(estaPago) {
-                    totalContasPagas += conta.valor;
-                } else {
-                    totalFaltaPagar += conta.valor;
-                }
+                if(estaPago) totalContasPagas += conta.valor;
+                else totalFaltaPagar += conta.valor;
 
                 if(conta.tipo === 'Fixa') fixas += conta.valor; else if(conta.tipo === 'Parcelada') parceladas += conta.valor; else unicas += conta.valor;
                 
                 let detalhe = conta.detalhe;
+                
+                // Se for parcelada e ele pagou, mostra no texto a parcela que ele acabou de pagar
+                if (conta.tipo === 'Parcelada' && estaPago) {
+                    const parcelaPaga = conta.parcelaAtual > 1 ? conta.parcelaAtual - 1 : 1;
+                    detalhe = `Parc. ${parcelaPaga}/${conta.totalParcelas}`;
+                }
+
                 let classeCard = estaPago ? 'expense-item pago' : 'expense-item';
                 
+                // NOVIDADE: Botão de desfazer na conta paga!
                 let conteudoAcoes = estaPago 
-                    ? `<div class="badge-pago"><i class="fa-solid fa-check-circle"></i> Paga</div>` 
+                    ? `<div style="display:flex; align-items:center; gap:8px;">
+                        <div class="badge-pago"><i class="fa-solid fa-check-circle"></i> Paga</div>
+                        <button class="btn-action edit" style="width: 28px; height: 28px; background: #e2e8f0; color: #64748b;" title="Desfazer Pagamento" onclick="desfazerPagamento('${conta.id}')"><i class="fa-solid fa-rotate-left"></i></button>
+                       </div>` 
                     : `<div class="actions-group">
                         <button class="btn-action pay pay-text" title="Adicionar como paga" onclick="abrirModalPagamento('${conta.id}')">
                             <i class="fa-solid fa-check"></i> Adicionar como paga
@@ -944,14 +982,36 @@
                 listaHtml.innerHTML += `<li class="${classeCard}"><div class="expense-header"><strong>${conta.descricao}</strong><div class="expense-value">R$ ${conta.valor.toFixed(2)}</div></div><div class="expense-footer"><span class="expense-tag">${detalhe}</span>${conteudoAcoes}</div></li>`;
             });
 
+            if(contasVazias) { listaHtml.innerHTML = '<li class="expense-item"><div style="text-align:center; color:#64748b; padding:10px;">Nenhuma conta pendente.</div></li>'; }
+
+            // === HISTÓRICO COM LIXEIRA PARA APAGAR ERROS ===
             const historicoHtml = document.getElementById('lista-historico');
             historicoHtml.innerHTML = '';
             const qHist = query(collection(db, "historico"), where("donoId", "==", usuarioLogado.uid));
             const histSnap = await getDocs(qHist);
             let meuHistorico = [];
-            histSnap.forEach(h => meuHistorico.push(h.data()));
+            histSnap.forEach(h => meuHistorico.push({ id: h.id, ...h.data() }));
+            
             if(meuHistorico.length === 0) { historicoHtml.innerHTML = '<p style="color: var(--text-muted); text-align: center;">Nenhum pagamento registrado.</p>'; } 
-            else { const mesesUnicos = [...new Set(meuHistorico.map(h => h.mesAno))]; mesesUnicos.forEach(mes => { historicoHtml.innerHTML += `<div style="font-size: 0.8rem; font-weight: 800; color: var(--text-muted); margin: 12px 0 8px 0; text-transform: uppercase;">${mes}</div>`; meuHistorico.filter(h => h.mesAno === mes).forEach(h => { historicoHtml.innerHTML += `<div class="history-item"><div><strong style="display:block; color:var(--text-main); margin-bottom:2px;">${h.descricao}</strong><small style="color: var(--text-muted);">Pago em: ${h.dataCompleta}</small></div><div style="font-weight: 800; color: var(--success);">R$ ${h.valor.toFixed(2)}</div></div>`; }); }); }
+            else { 
+                const mesesUnicos = [...new Set(meuHistorico.map(h => h.mesAno))]; 
+                mesesUnicos.forEach(mes => { 
+                    historicoHtml.innerHTML += `<div style="font-size: 0.8rem; font-weight: 800; color: var(--text-muted); margin: 12px 0 8px 0; text-transform: uppercase;">${mes}</div>`; 
+                    meuHistorico.filter(h => h.mesAno === mes).forEach(h => { 
+                        historicoHtml.innerHTML += `
+                        <div class="history-item">
+                            <div>
+                                <strong style="display:block; color:var(--text-main); margin-bottom:2px;">${h.descricao}</strong>
+                                <small style="color: var(--text-muted);">Pago em: ${h.dataCompleta}</small>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <strong style="font-weight: 800; color: var(--success);">R$ ${h.valor.toFixed(2)}</strong>
+                                <button class="btn-action delete" style="width: 30px; height: 30px; font-size: 0.85rem;" title="Apagar do Histórico" onclick="excluirHistorico('${h.id}')"><i class="fa-solid fa-trash-can"></i></button>
+                            </div>
+                        </div>`; 
+                    }); 
+                }); 
+            }
 
             const saldo = cacheDadosApp.salario - totalContasPagas;
             
