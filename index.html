@@ -257,7 +257,6 @@
                     <h3>Despesas (Total do Mês)</h3>
                     <p id="display-despesas" style="color: var(--danger); font-size: 1.2rem;">R$ 0,00</p>
                 </div>
-                <!-- NOVO CARD: QUANTO FALTA PARA PAGAR -->
                 <div class="dash-card" style="grid-column: span 2;">
                     <h3>Falta Pagar (Pendente)</h3>
                     <p id="display-falta-pagar" style="color: var(--warning); font-size: 1.6rem;">R$ 0,00</p>
@@ -628,9 +627,11 @@
             }
 
             let detalhe = tipo === 'Fixa' ? 'Conta Fixa' : (tipo === 'Unica' ? 'Única' : 'Parcela 1/' + totalParcelas);
+            // Salva o mês de criação/referência da conta para garantir o controle imediato
+            const mesReferencia = obterMesAnoAtual();
 
             if (!editId) {
-                await addDoc(collection(db, "despesas"), { donoId: usuarioLogado.uid, descricao: desc, valor: valor, tipo: tipo, parcelaAtual: 1, totalParcelas: totalParcelas, pagoMes: null, detalhe: detalhe });
+                await addDoc(collection(db, "despesas"), { donoId: usuarioLogado.uid, descricao: desc, valor: valor, tipo: tipo, parcelaAtual: 1, totalParcelas: totalParcelas, pagoMes: null, mesCriacao: mesReferencia, detalhe: detalhe });
             } else {
                 await updateDoc(doc(db, "despesas", editId), { descricao: desc, valor: valor, tipo: tipo, totalParcelas: totalParcelas, detalhe: detalhe });
                 window.cancelarEdicao();
@@ -688,6 +689,8 @@
             const dataCompleta = new Date().toLocaleDateString('pt-BR');
 
             await addDoc(collection(db, "historico"), { donoId: usuarioLogado.uid, descricao: conta.descricao, valor: conta.valor, mesAno: mesAnoAtual, dataCompleta: dataCompleta });
+            
+            // Atualiza imediatamente o pagoMes para refletir na hora na tela
             await updateDoc(despesaRef, { pagoMes: mesAnoAtual });
             atualizarDashboard();
         };
@@ -810,7 +813,7 @@
             });
         };
 
-        // ====== ATUALIZAÇÃO DO DASHBOARD ======
+        // ====== ATUALIZAÇÃO DO DASHBOARD COM ATUALIZAÇÃO IMEDIATA ======
         async function atualizarDashboard() {
             if (!usuarioLogado) return;
 
@@ -885,6 +888,7 @@
             if(despesas.length === 0) { listaHtml.innerHTML = '<li class="expense-item"><div style="text-align:center; color:#64748b; padding:10px;">Nenhuma conta no mês.</div></li>'; }
             
             despesas.forEach(conta => {
+                // Verifica se foi pago no mês atual de forma instantânea
                 const estaPago = (conta.pagoMes === mesAnoAtual);
                 
                 totalContasGeral += conta.valor;
@@ -892,7 +896,6 @@
                 if(estaPago) {
                     totalContasPagas += conta.valor;
                 } else {
-                    // Acumula o que ainda falta pagar
                     totalFaltaPagar += conta.valor;
                 }
 
@@ -928,8 +931,6 @@
             document.getElementById('display-renda').innerText = `R$ ${cacheDadosApp.salario.toFixed(2)}`; 
             document.getElementById('display-despesas').innerText = `R$ ${totalContasGeral.toFixed(2)}`; 
             document.getElementById('display-saldo').innerText = `R$ ${saldo.toFixed(2)}`;
-            
-            // ATUALIZA O CARD DE "FALTA PAGAR"
             document.getElementById('display-falta-pagar').innerText = `R$ ${totalFaltaPagar.toFixed(2)}`;
             
             const cardSaldo = document.getElementById('card-saldo'); 
