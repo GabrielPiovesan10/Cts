@@ -627,11 +627,18 @@
             }
 
             let detalhe = tipo === 'Fixa' ? 'Conta Fixa' : (tipo === 'Unica' ? 'Única' : 'Parcela 1/' + totalParcelas);
-            // Salva o mês de criação/referência da conta para garantir o controle imediato
-            const mesReferencia = obterMesAnoAtual();
 
             if (!editId) {
-                await addDoc(collection(db, "despesas"), { donoId: usuarioLogado.uid, descricao: desc, valor: valor, tipo: tipo, parcelaAtual: 1, totalParcelas: totalParcelas, pagoMes: null, mesCriacao: mesReferencia, detalhe: detalhe });
+                await addDoc(collection(db, "despesas"), { 
+                    donoId: usuarioLogado.uid, 
+                    descricao: desc, 
+                    valor: valor, 
+                    tipo: tipo, 
+                    parcelaAtual: 1, 
+                    totalParcelas: totalParcelas, 
+                    pago: false, // Controle direto de status
+                    detalhe: detalhe 
+                });
             } else {
                 await updateDoc(doc(db, "despesas", editId), { descricao: desc, valor: valor, tipo: tipo, totalParcelas: totalParcelas, detalhe: detalhe });
                 window.cancelarEdicao();
@@ -678,6 +685,7 @@
         window.abrirModalPagamento = function(id) { idParaPagar = id; document.getElementById('modal-pagamento').classList.remove('hidden'); };
         window.fecharModalPagamento = function() { idParaPagar = null; document.getElementById('modal-pagamento').classList.add('hidden'); };
 
+        // ====== LÓGICA DE PAGAMENTO INTELIGENTE (AVANÇA PARCELAS E ATUALIZA HORA) ======
         window.executarPagamento = async function() {
             if (!idParaPagar) return;
             const id = idParaPagar; window.fecharModalPagamento();
@@ -688,10 +696,26 @@
             const mesAnoAtual = obterMesAnoAtual();
             const dataCompleta = new Date().toLocaleDateString('pt-BR');
 
+            // Salva no histórico
             await addDoc(collection(db, "historico"), { donoId: usuarioLogado.uid, descricao: conta.descricao, valor: conta.valor, mesAno: mesAnoAtual, dataCompleta: dataCompleta });
-            
-            // Atualiza imediatamente o pagoMes para refletir na hora na tela
-            await updateDoc(despesaRef, { pagoMes: mesAnoAtual });
+
+            // Se for conta parcelada e ainda faltarem parcelas, avança a parcela e desmarca o pago para aparecer no próximo mês/ciclo imediatamente!
+            if (conta.tipo === 'Parcelada' && conta.parcelaAtual < conta.totalParcelas) {
+                const novaParcela = conta.parcelaAtual + 1;
+                const novoDetalhe = `Parc. ${novaParcela}/${conta.totalParcelas}`;
+                await updateDoc(despesaRef, { 
+                    parcelaAtual: novaParcela, 
+                    detalhe: novoDetalhe, 
+                    pago: false 
+                });
+            } else if (conta.tipo === 'Unica') {
+                // Conta única paga pode ser excluída ou marcada como concluída para sumir das pendentes
+                await deleteDoc(despesaRef);
+            } else {
+                // Conta fixa ou última parcela: apenas marca como paga
+                await updateDoc(despesaRef, { pago: true });
+            }
+
             atualizarDashboard();
         };
 
@@ -813,7 +837,7 @@
             });
         };
 
-        // ====== ATUALIZAÇÃO DO DASHBOARD COM ATUALIZAÇÃO IMEDIATA ======
+        // ====== ATUALIZAÇÃO DO DASHBOARD ======
         async function atualizarDashboard() {
             if (!usuarioLogado) return;
 
@@ -872,8 +896,6 @@
 
             // --- FINANCEIRO ---
             const mesAnoAtual = obterMesAnoAtual();
-            
-            // ATUALIZA O TÍTULO DA LISTA COM O MÊS ATUAL
             document.getElementById('titulo-mes-atual').innerText = `Contas de ${mesAnoAtual}`;
 
             let totalContasGeral = 0, totalContasPagas = 0, totalFaltaPagar = 0, fixas = 0, parceladas = 0, unicas = 0;
@@ -888,8 +910,7 @@
             if(despesas.length === 0) { listaHtml.innerHTML = '<li class="expense-item"><div style="text-align:center; color:#64748b; padding:10px;">Nenhuma conta no mês.</div></li>'; }
             
             despesas.forEach(conta => {
-                // Verifica se foi pago no mês atual de forma instantânea
-                const estaPago = (conta.pagoMes === mesAnoAtual);
+                const estaPago = conta.pago === true;
                 
                 totalContasGeral += conta.valor;
                 
@@ -900,8 +921,8 @@
                 }
 
                 if(conta.tipo === 'Fixa') fixas += conta.valor; else if(conta.tipo === 'Parcelada') parceladas += conta.valor; else unicas += conta.valor;
+                
                 let detalhe = conta.detalhe;
-                if (conta.tipo === 'Parcelada') { const restam = conta.totalParcelas - conta.parcelaAtual; detalhe = `Parc. ${conta.parcelaAtual}/${conta.totalParcelas}`; if (estaPago && restam > 0) detalhe += ` (+${restam})`; }
                 let classeCard = estaPago ? 'expense-item pago' : 'expense-item';
                 
                 let conteudoAcoes = estaPago 
