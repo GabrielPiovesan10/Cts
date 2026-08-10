@@ -525,9 +525,8 @@
                 await setPersistence(auth, browserLocalPersistence);
 
                 if(window.currentAuthMode === 'register') {
-                    const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
-                    await setDoc(doc(db, "usuarios", userCredential.user.uid), { salario: 0, orcamentoMercado: 0, carrinhoMercado: [] });
-                    window.mostrarAlerta("Sua conta foi criada com sucesso! Você já pode organizar suas finanças.", "Conta Criada");
+                    window.mostrarAlerta("Para acessar o aplicativo é necessário assinar a mensalidade de R$ 80,00. Entre em contato para realizar o pagamento e liberar seu acesso.", "Assinatura Necessária");
+                    return;
                 } else {
                     await signInWithEmailAndPassword(auth, email, senha);
                 }
