@@ -132,6 +132,7 @@
                 <i class="fa-solid fa-bell"></i>
             </div>
             <h3 id="texto-alerta-titulo">Aviso</h3>
+            <!-- Mudei aqui para innerHTML no JS para aceitar a formatação bonita e o botão -->
             <p id="texto-alerta-mensagem">Mensagem do alerta vai aqui.</p>
             <div class="modal-buttons">
                 <button class="modal-btn confirm" style="background: var(--primary);" onclick="fecharAlerta()">Entendi</button>
@@ -436,10 +437,29 @@
         const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
         function obterMesAnoAtual() { return `${nomesMeses[new Date().getMonth()]} de ${new Date().getFullYear()}`; }
 
+        // ====== FUNÇÃO PARA COPIAR A CHAVE PIX ======
+        window.copiarChavePix = function(botao) {
+            // A chave fica limpa sem espaços para não dar erro no app do banco
+            navigator.clipboard.writeText("19993405480").then(() => {
+                const textoOriginal = botao.innerHTML;
+                botao.innerHTML = '<i class="fa-solid fa-check"></i> Copiado!';
+                botao.style.background = 'var(--success)';
+                
+                // Volta ao normal após 2 segundos
+                setTimeout(() => {
+                    botao.innerHTML = textoOriginal;
+                    botao.style.background = 'var(--primary)';
+                }, 2000);
+            }).catch(err => {
+                console.error('Erro ao copiar: ', err);
+            });
+        };
+
         // ====== FUNÇÕES DOS MODAIS CUSTOMIZADOS ======
         window.mostrarAlerta = function(mensagem, titulo = "Aviso") {
             document.getElementById('texto-alerta-titulo').innerText = titulo;
-            document.getElementById('texto-alerta-mensagem').innerText = mensagem;
+            // AQUI MUDAMOS PARA innerHTML para aceitar o botão HTML e negrito
+            document.getElementById('texto-alerta-mensagem').innerHTML = mensagem;
             
             const icone = document.getElementById('icone-alerta');
             if (titulo === "Sucesso" || titulo === "Conta Criada" || titulo === "Valor Identificado") {
@@ -525,7 +545,19 @@
                 await setPersistence(auth, browserLocalPersistence);
 
                 if(window.currentAuthMode === 'register') {
-                    window.mostrarAlerta("Para acessar o aplicativo é necessário assinar a mensalidade de R$ 80,00. Entre em contato para realizar o pagamento e liberar seu acesso.", "Assinatura Necessária");
+                    // Mensagem com HTML, botão de copiar e visual agradável
+                    const mensagemPix = `
+                        Para acessar o aplicativo, é necessário assinar a mensalidade de <strong>R$ 80,00</strong>.<br><br>
+                        Faça o Pix para a chave celular (WhatsApp):
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin: 15px 0; background: var(--bg-body); padding: 12px 15px; border-radius: 12px; border: 1px dashed var(--primary);">
+                            <strong style="font-size: 1.2rem; color: var(--primary); letter-spacing: 1px;">19 99340-5480</strong>
+                            <button onclick="copiarChavePix(this)" style="background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 8px; transition: 0.3s;">
+                                <i class="fa-solid fa-copy"></i> Copiar
+                            </button>
+                        </div>
+                        Após o pagamento, envie o comprovante no WhatsApp para liberar seu acesso imediatamente!
+                    `;
+                    window.mostrarAlerta(mensagemPix, "Assinatura Necessária");
                     return;
                 } else {
                     await signInWithEmailAndPassword(auth, email, senha);
